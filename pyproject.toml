@@ -1,0 +1,90 @@
+[build-system]
+requires = []
+backend-path = ['src']
+build-backend = "xmake_python"
+
+# https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+[project]
+name = "xmake-python"
+version = "0.0.1"
+description = "xmake Python build system (PEP 517)"
+readme = "README.md"
+requires-python = ">= 3.10"
+keywords = ["xmake", "build", "backend", "pep517", "package"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Build Tools",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX",
+  "Operating System :: Unix",
+  "Operating System :: MacOS",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+
+[[project.authors]]
+name = "ruki"
+email = "waruqi@gmail.com"
+
+[project.license]
+text = "GPL v3"
+
+[project.urls]
+Homepage = "https://xmake-python.readthedocs.io"
+Download = "https://github.com/xmake-io/xmake-python/releases"
+"Bug Report" = "https://github.com/xmake-io/xmake-python/issues"
+Source = "https://github.com/xmake-io/xmake-python"
+
+[tool.mdformat]
+number = true
+
+[tool.doq]
+template_path = "templates"
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.lint]
+select = [
+  # pycodestyle
+  "E",
+  # pyflakes
+  "F",
+  # pyupgrade
+  "UP",
+  # flake8-bugbear
+  "B",
+  # flake8-simplify
+  "SIM",
+  # isort
+  "I",
+]
+ignore = ["D205", "D400"]
+preview = true
+
+[tool.ruff.format]
+docstring-code-format = true
+preview = true
+
+[tool.coverage.report]
+exclude_lines = [
+  "if TYPE_CHECKING:",
+  "if __name__ == .__main__.:",
+  "\\s*import tomli as tomllib",
+]
+
+[tool.cibuildwheel]
+archs = ["all"]
+# https://github.com/astral-sh/uv/issues/10260
+skip = "*37-* *38-* *39-* *-musllinux_s390x *-musllinux_ppc64*"
+build-frontend = "build[uv]"
+before-test = "pip install .[dev]"
+test-command = "pytest {project}"
