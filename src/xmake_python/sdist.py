@@ -11,6 +11,7 @@ from posixpath import join as pjoin
 import tarfile
 
 from . import common
+from ._file_processor import each_unignored_file
 
 log = logging.getLogger(__name__)
 
@@ -113,12 +114,13 @@ class SdistBuilder:
         This is overridden in flit itself to use information from a VCS to
         include tests, docs, etc. for a 'gold standard' sdist.
         """
-        cfgdir_s = str(self.cfgdir)
-        return [
-            osp.relpath(p, cfgdir_s) for p in self.module.iter_files()
-        ] + [
-            osp.relpath(p, cfgdir_s) for p in common.walk_data_dir(self.data_directory)
-        ] + self.extra_files
+        return list(map(lambda x: str(x), each_unignored_file(Path())))
+        # cfgdir_s = str(self.cfgdir)
+        # return [
+        #     osp.relpath(p, cfgdir_s) for p in self.module.iter_files()
+        # ] + [
+        #     osp.relpath(p, cfgdir_s) for p in common.walk_data_dir(self.data_directory)
+        # ] + self.extra_files
 
     def apply_includes_excludes(self, files):
         cfgdir_s = str(self.cfgdir)
@@ -172,6 +174,7 @@ class SdistBuilder:
                              format=tarfile.PAX_FORMAT)
 
         try:
+            breakpoint()
             files_to_add = self.apply_includes_excludes(self.select_files())
 
             for relpath in files_to_add:
