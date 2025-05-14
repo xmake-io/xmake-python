@@ -174,7 +174,6 @@ class SdistBuilder:
                              format=tarfile.PAX_FORMAT)
 
         try:
-            breakpoint()
             files_to_add = self.apply_includes_excludes(self.select_files())
 
             for relpath in files_to_add:
