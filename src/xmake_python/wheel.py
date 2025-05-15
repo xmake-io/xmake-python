@@ -63,7 +63,7 @@ def zip_timestamp_from_env() -> tuple[int, int, int, int, int, int] | None:
 
 class WheelBuilder:
     def __init__(
-            self, directory, module, metadata, entrypoints, target_fp, data_directory, xmake: bool = False
+            self, directory, module, metadata, entrypoints, target_fp, data_directory, xmake = None
     ):
         """Build a wheel from a module/package
         """
@@ -86,12 +86,15 @@ class WheelBuilder:
         from .config import read_flit_config
         directory = ini_path.parent
         xmake_path = directory / "xmake.lua"
+        xmake = None
+        if xmake_path.exists():
+            xmake = XMaker()
         ini_info = read_flit_config(ini_path)
         entrypoints = ini_info.entrypoints
         module = common.Module(ini_info.module, directory)
         metadata = common.make_metadata(module, ini_info)
         return cls(
-            directory, module, metadata, entrypoints, target_fp, ini_info.data_directory, xmake_path.exists()
+            directory, module, metadata, entrypoints, target_fp, ini_info.data_directory, xmake
         )
 
     @property
@@ -230,9 +233,9 @@ class WheelBuilder:
 
     def build(self, editable=False):
         if self.xmake:
-            XMaker().config()
-            XMaker().build()
-            XMaker().install()
+            self.xmake.config()
+            self.xmake.build()
+            self.xmake.install()
         try:
             if editable:
                 self.add_pth()
