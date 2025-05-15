@@ -182,13 +182,13 @@ def get_docstring_and_version_via_import(target):
 
     log.debug("Loading module %s", target.file)
     from importlib.util import spec_from_file_location, module_from_spec
-    mod_name = 'flit_core.dummy.import%d' % _import_i
+    mod_name = 'xmake_core.dummy.import%d' % _import_i
     spec = spec_from_file_location(mod_name, target.file)
     with _module_load_ctx():
         m = module_from_spec(spec)
         # Add the module to sys.modules to allow relative imports to work.
         # importlib has more code around this to handle the case where two
-        # threads are trying to load the same module at the same time, but Flit
+        # threads are trying to load the same module at the same time, but Xmake
         # should always be running a single thread, so we won't duplicate that.
         sys.modules[mod_name] = m
         try:
@@ -226,7 +226,7 @@ def get_info_from_module(target, for_fields=('version', 'description')):
     if want_summary:
         if (not docstring) or not docstring.strip():
             raise NoDocstringError(
-                'Flit cannot package module without docstring, or empty docstring. '
+                'Xmake cannot package module without docstring, or empty docstring. '
                 'Please add a docstring to your module ({}).'.format(target.file)
             )
         res['summary'] = docstring.lstrip().splitlines()[0]

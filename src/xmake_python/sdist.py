@@ -69,7 +69,7 @@ class SdistBuilder:
     """Builds a minimal sdist
 
     These minimal sdists should work for PEP 517.
-    The class is extended in flit.sdist to make a more 'full fat' sdist,
+    The class is extended in xmake.sdist to make a more 'full fat' sdist,
     which is what should normally be published to PyPI.
     """
     def __init__(self, module, metadata, cfgdir, reqs_by_extra, entrypoints,
@@ -87,8 +87,8 @@ class SdistBuilder:
     @classmethod
     def from_ini_path(cls, ini_path: Path):
         # Local import so bootstrapping doesn't try to load toml
-        from .config import read_flit_config
-        ini_info = read_flit_config(ini_path)
+        from .config import read_xmake_config
+        ini_info = read_xmake_config(ini_path)
         srcdir = ini_path.parent
         module = common.Module(ini_info.module, srcdir)
         metadata = common.make_metadata(module, ini_info)
@@ -111,7 +111,7 @@ class SdistBuilder:
     def select_files(self):
         """Pick which files from the source tree will be included in the sdist
 
-        This is overridden in flit itself to use information from a VCS to
+        This is overridden in xmake itself to use information from a VCS to
         include tests, docs, etc. for a 'gold standard' sdist.
         """
         return list(map(lambda x: str(x), each_unignored_file(Path())))
@@ -154,7 +154,7 @@ class SdistBuilder:
         return sorted(files)
 
     def add_setup_py(self, files_to_add, target_tarfile):
-        """No-op here; overridden in flit to generate setup.py"""
+        """No-op here; overridden in xmake to generate setup.py"""
         pass
 
     @property

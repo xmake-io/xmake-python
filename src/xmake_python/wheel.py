@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 
 wheel_file_template = """\
 Wheel-Version: 1.0
-Generator: flit {version}
+Generator: xmake {version}
 Root-Is-Purelib: true
 """.format(version=__version__)
 
@@ -83,13 +83,13 @@ class WheelBuilder:
 
     @classmethod
     def from_ini_path(cls, ini_path, target_fp):
-        from .config import read_flit_config
+        from .config import read_xmake_config
         directory = ini_path.parent
         xmake_path = directory / "xmake.lua"
         xmake = None
         if xmake_path.exists():
             xmake = XMaker()
-        ini_info = read_flit_config(ini_path)
+        ini_info = read_xmake_config(ini_path)
         entrypoints = ini_info.entrypoints
         module = common.Module(ini_info.module, directory)
         metadata = common.make_metadata(module, ini_info)

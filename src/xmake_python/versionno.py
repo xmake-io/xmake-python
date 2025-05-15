@@ -70,15 +70,15 @@ def normalise_version(orig_version):
     """Normalise version number according to rules in PEP 440
 
     Raises InvalidVersion if the version does not match PEP 440. This can be
-    overridden with the FLIT_ALLOW_INVALID environment variable.
+    overridden with the XMAKE_ALLOW_INVALID environment variable.
 
     https://www.python.org/dev/peps/pep-0440/#normalization
     """
     version = orig_version.lower()
     m = VERSION_PERMISSIVE.match(version)
     if not m:
-        if os.environ.get('FLIT_ALLOW_INVALID'):
-            log.warning("Invalid version number {!r} allowed by FLIT_ALLOW_INVALID"
+        if os.environ.get('XMAKE_ALLOW_INVALID'):
+            log.warning("Invalid version number {!r} allowed by XMAKE_ALLOW_INVALID"
                         .format(orig_version))
             return version
         else:
