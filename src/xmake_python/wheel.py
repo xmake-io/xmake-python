@@ -15,6 +15,7 @@ from types import SimpleNamespace
 import zipfile
 
 from . import common
+from .__main__ import __version__
 
 log = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ wheel_file_template = """\
 Wheel-Version: 1.0
 Generator: flit {version}
 Root-Is-Purelib: true
-""".format(version="0.0.1")
+""".format(version=__version__)
 
 def _write_wheel_file(f, supports_py2=False):
     f.write(wheel_file_template)
