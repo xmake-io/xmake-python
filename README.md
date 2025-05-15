@@ -15,7 +15,7 @@ requires = ["xmake-python"]
 build-backend = "xmake_python"
 ```
 
-[example](/test/project/example)
+[example](tests/project/example)
 
 ## Introduction
 
