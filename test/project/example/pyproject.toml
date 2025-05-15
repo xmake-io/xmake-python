@@ -1,5 +1,5 @@
 [build-system]
-requires = ["xmake-python"]
+requires = ["xmake-python", "cython"]
 build-backend = "xmake_python"
 
 [project]
