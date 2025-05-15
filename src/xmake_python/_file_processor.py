@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import pathspec
 
-from scikit_build_core.format import pyproject_format
+from .format import pyproject_format
 
 if TYPE_CHECKING:
     from collections.abc import Generator, Sequence

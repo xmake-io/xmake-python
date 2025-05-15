@@ -1,5 +1,5 @@
 [build-system]
-requires = []
+requires = ["pathspec"]
 backend-path = ['src']
 build-backend = "xmake_python"
 
@@ -29,6 +29,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
+dependence = ["pathspec"]
 
 [[project.authors]]
 name = "ruki"
