@@ -182,6 +182,26 @@ class WheelBuilder:
         for full_path in common.walk_data_dir(self.data_directory):
             rel_path = os.path.relpath(full_path, self.data_directory)
             self._add_file(full_path, dir_in_whl + rel_path)
+        for name in {"lib", "share"}:
+            for full_path in common.walk_data_dir(name):
+                rel_path = os.path.relpath(full_path, self.data_directory).partition(name + "/")[2]
+                self._add_file(full_path, dir_in_whl + name + "/" + rel_path)
+
+    def add_scripts_directory(self):
+        dir_in_whl = '{}.data/scripts/'.format(
+            common.normalize_dist_name(self.metadata.name, self.metadata.version)
+        )
+        for full_path in common.walk_data_dir("bin"):
+            rel_path = os.path.relpath(full_path, self.data_directory).partition("bin/")[2]
+            self._add_file(full_path, dir_in_whl + rel_path)
+
+    def add_headers_directory(self):
+        dir_in_whl = '{}.data/headers/'.format(
+            common.normalize_dist_name(self.metadata.name, self.metadata.version)
+        )
+        for full_path in common.walk_data_dir("include"):
+            rel_path = os.path.relpath(full_path, self.data_directory).partition("include/")[2]
+            self._add_file(full_path, dir_in_whl + rel_path)
 
     def write_metadata(self):
         log.info('Writing metadata files')
@@ -219,6 +239,8 @@ class WheelBuilder:
             else:
                 self.copy_module()
             self.add_data_directory()
+            self.add_scripts_directory()
+            self.add_headers_directory()
             self.write_metadata()
             self.write_record()
         finally:
