@@ -2,6 +2,9 @@
 
 WIP
 
+- [ ] install xmake from PYPI when it cannot be searched in $PATH
+- [ ] provide some path (like scikit-build-core's `SKBUILD_PLATLIB_DIR`) to install python binary module (XXX.cpython-313-x86_64-linux-gnu.so)
+
 ## Usage
 
 `pyproject.toml`:
@@ -10,6 +13,14 @@ WIP
 [build-system]
 requires = ["xmake-python"]
 build-backend = "xmake_python"
+```
+
+Run a frontend:
+
+```sh
+$ python -m build -nw
+$ ls dist
+dist/xmake_python-0.0.1-cp313-cp313-linux_x86_64.whl
 ```
 
 ## Introduction

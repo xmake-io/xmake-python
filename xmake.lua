@@ -43,6 +43,8 @@ rule("python.cython")
         batchcmds:set_depcache(target:dependfile(objectfile))
     end)
 
+-- ERROR Backend subprocess exited when trying to invoke build_wheel
+-- target("__main__")
 target("main")
 set_prefixdir("/", {libdir = "src/xmake_python"})
 add_rules("python.library", "python.cython", { soabi = true })

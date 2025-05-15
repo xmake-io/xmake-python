@@ -16,6 +16,8 @@ import zipfile
 
 from . import common
 from .__main__ import __version__
+from .xmake import XMaker
+from .builder.wheel_tag import WheelTag
 
 log = logging.getLogger(__name__)
 
@@ -61,7 +63,7 @@ def zip_timestamp_from_env() -> tuple[int, int, int, int, int, int] | None:
 
 class WheelBuilder:
     def __init__(
-            self, directory, module, metadata, entrypoints, target_fp, data_directory
+            self, directory, module, metadata, entrypoints, target_fp, data_directory, xmake: bool = False
     ):
         """Build a wheel from a module/package
         """
@@ -77,17 +79,19 @@ class WheelBuilder:
         # Open the zip file ready to write
         self.wheel_zip = zipfile.ZipFile(target_fp, 'w',
                              compression=zipfile.ZIP_DEFLATED)
+        self.xmake = xmake
 
     @classmethod
     def from_ini_path(cls, ini_path, target_fp):
         from .config import read_flit_config
         directory = ini_path.parent
+        xmake_path = directory / "xmake.lua"
         ini_info = read_flit_config(ini_path)
         entrypoints = ini_info.entrypoints
         module = common.Module(ini_info.module, directory)
         metadata = common.make_metadata(module, ini_info)
         return cls(
-            directory, module, metadata, entrypoints, target_fp, ini_info.data_directory
+            directory, module, metadata, entrypoints, target_fp, ini_info.data_directory, xmake_path.exists()
         )
 
     @property
@@ -97,7 +101,10 @@ class WheelBuilder:
     @property
     def wheel_filename(self):
         dist_name = common.normalize_dist_name(self.metadata.name, self.metadata.version)
-        tag = ('py2.' if self.metadata.supports_py2 else '') + 'py3-none-any'
+        if self.xmake:
+            tag = str(WheelTag.compute_best([]))
+        else:
+            tag = ('py2.' if self.metadata.supports_py2 else '') + 'py3-none-any'
         return '{}-{}.whl'.format(dist_name, tag)
 
     def _add_file(self, full_path, rel_path):
@@ -202,6 +209,10 @@ class WheelBuilder:
             f.write(self.dist_info + '/RECORD,,\n')
 
     def build(self, editable=False):
+        if self.xmake:
+            XMaker().config()
+            XMaker().build()
+            XMaker().install()
         try:
             if editable:
                 self.add_pth()
