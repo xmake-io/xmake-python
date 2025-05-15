@@ -31,6 +31,9 @@ classifiers = [
 ]
 dependence = ["pathspec", "packaging"]
 
+[project.optional-dependencies]
+dev = ["pytest-cov"]
+
 [[project.authors]]
 name = "ruki"
 email = "waruqi@gmail.com"
