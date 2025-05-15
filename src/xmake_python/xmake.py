@@ -7,10 +7,10 @@ class XMaker:
     xmake: str = "xmake"
 
     def config(self):
-        run([self.xmake, "config"])
+        run([self.xmake, "config", "-P", "."])
 
     def build(self):
-        run([self.xmake])
+        run([self.xmake, "-P", ".", "--verbose"])
 
     def install(self):
-        run([self.xmake, "install", "-o", "."])
+        run([self.xmake, "install", "-P", ".", "-o", "."])

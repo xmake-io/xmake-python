@@ -1,0 +1,8 @@
+[build-system]
+requires = ["xmake-python"]
+build-backend = "xmake_python"
+
+[project]
+name = "example"
+description = ""
+version = "0.0.1"

@@ -15,13 +15,7 @@ requires = ["xmake-python"]
 build-backend = "xmake_python"
 ```
 
-Run a frontend:
-
-```sh
-$ python -m build -nw
-$ ls dist
-dist/xmake_python-0.0.1-cp313-cp313-linux_x86_64.whl
-```
+[example](/test/project/example/README.md)
 
 ## Introduction
 
