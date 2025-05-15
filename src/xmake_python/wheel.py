@@ -81,6 +81,10 @@ class WheelBuilder:
         self.wheel_zip = zipfile.ZipFile(target_fp, 'w',
                              compression=zipfile.ZIP_DEFLATED)
         self.xmake = xmake
+        if xmake:
+            self.output = xmake.output
+        else:
+            self.output = "."
 
     @classmethod
     def from_ini_path(cls, ini_path, target_fp):
@@ -190,7 +194,7 @@ class WheelBuilder:
             rel_path = os.path.relpath(full_path, self.data_directory)
             self._add_file(full_path, dir_in_whl + rel_path)
         for name in {"lib", "share"}:
-            for full_path in common.walk_data_dir(str(Path(self.xmake.output) / name)):
+            for full_path in common.walk_data_dir(str(Path(self.output) / name)):
                 rel_path = os.path.relpath(full_path, self.data_directory).partition(name + "/")[2]
                 self._add_file(full_path, dir_in_whl + name + "/" + rel_path)
 
@@ -198,7 +202,7 @@ class WheelBuilder:
         dir_in_whl = '{}.data/scripts/'.format(
             common.normalize_dist_name(self.metadata.name, self.metadata.version)
         )
-        for full_path in common.walk_data_dir(str(Path(self.xmake.output) / "bin")):
+        for full_path in common.walk_data_dir(str(Path(self.output) / "bin")):
             rel_path = os.path.relpath(full_path, self.data_directory).partition("bin/")[2]
             self._add_file(full_path, dir_in_whl + rel_path)
 
@@ -206,7 +210,7 @@ class WheelBuilder:
         dir_in_whl = '{}.data/headers/'.format(
             common.normalize_dist_name(self.metadata.name, self.metadata.version)
         )
-        for full_path in common.walk_data_dir(str(Path(self.xmake.output) / "include")):
+        for full_path in common.walk_data_dir(str(Path(self.output) / "include")):
             rel_path = os.path.relpath(full_path, self.data_directory).partition("include/")[2]
             self._add_file(full_path, dir_in_whl + rel_path)
 
