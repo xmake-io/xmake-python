@@ -1,6 +1,6 @@
 # xmake Python build system (PEP 517)
 
-WIP
+A python build system based on xmake to output sdist/wheel file respecting PEP517.
 
 - [ ] install xmake from PYPI when it cannot be searched in $PATH
 - [ ] provide some path (like scikit-build-core's `SKBUILD_PLATLIB_DIR`) to install python binary module (XXX.cpython-313-x86_64-linux-gnu.so)
