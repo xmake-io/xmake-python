@@ -13,6 +13,7 @@ import tempfile
 from pathlib import Path
 from types import SimpleNamespace
 import zipfile
+from pathlib import Path
 
 from . import common
 from .__main__ import __version__
@@ -85,14 +86,14 @@ class WheelBuilder:
     def from_ini_path(cls, ini_path, target_fp):
         from .config import read_xmake_config
         directory = ini_path.parent
-        xmake_path = directory / "xmake.lua"
         ini_info = read_xmake_config(ini_path)
         entrypoints = ini_info.entrypoints
         module = common.Module(ini_info.module, directory)
         metadata = common.make_metadata(module, ini_info)
         xmake = None
-        if xmake_path.exists():
-            xmaker = ini_info.dtool.get("xmaker", {})
+        xmaker = ini_info.dtool.get("xmaker", {})
+        xmake_path = directory / "xmake.lua"
+        if xmake_path.exists() or xmaker != {}:
             xmake = XMaker(xmaker.get("xmake", "xmake"),
                            xmaker.get("root", "."),
                            xmaker.get("out", "."))
@@ -189,7 +190,7 @@ class WheelBuilder:
             rel_path = os.path.relpath(full_path, self.data_directory)
             self._add_file(full_path, dir_in_whl + rel_path)
         for name in {"lib", "share"}:
-            for full_path in common.walk_data_dir(name):
+            for full_path in common.walk_data_dir(str(Path(self.xmake.output) / name)):
                 rel_path = os.path.relpath(full_path, self.data_directory).partition(name + "/")[2]
                 self._add_file(full_path, dir_in_whl + name + "/" + rel_path)
 
@@ -197,7 +198,7 @@ class WheelBuilder:
         dir_in_whl = '{}.data/scripts/'.format(
             common.normalize_dist_name(self.metadata.name, self.metadata.version)
         )
-        for full_path in common.walk_data_dir("bin"):
+        for full_path in common.walk_data_dir(str(Path(self.xmake.output) / "bin")):
             rel_path = os.path.relpath(full_path, self.data_directory).partition("bin/")[2]
             self._add_file(full_path, dir_in_whl + rel_path)
 
@@ -205,7 +206,7 @@ class WheelBuilder:
         dir_in_whl = '{}.data/headers/'.format(
             common.normalize_dist_name(self.metadata.name, self.metadata.version)
         )
-        for full_path in common.walk_data_dir("include"):
+        for full_path in common.walk_data_dir(str(Path(self.xmake.output) / "include")):
             rel_path = os.path.relpath(full_path, self.data_directory).partition("include/")[2]
             self._add_file(full_path, dir_in_whl + rel_path)
 
