@@ -130,7 +130,7 @@ def prep_toml_config(d, path):
         )
 
     unknown_sections = set(dtool) - {
-        'metadata', 'module', 'scripts', 'entrypoints', 'sdist', 'external-data'
+        'metadata', 'module', 'scripts', 'entrypoints', 'sdist', 'external-data', 'xmaker'
     }
     unknown_sections = [s for s in unknown_sections if not s.lower().startswith('x-')]
     if unknown_sections:
@@ -177,6 +177,7 @@ def prep_toml_config(d, path):
         if not loaded_cfg.data_directory.is_dir():
             raise ConfigError(f"{toml_key} must refer to a directory")
 
+    loaded_cfg.dtool = dtool
     return loaded_cfg
 
 def flatten_entrypoints(ep):
@@ -257,6 +258,7 @@ class LoadedConfig:
         self.sdist_exclude_patterns = []
         self.dynamic_metadata = []
         self.data_directory = None
+        self.dtool = {}
 
     def add_scripts(self, scripts_dict):
         if scripts_dict:

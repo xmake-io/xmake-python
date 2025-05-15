@@ -86,13 +86,16 @@ class WheelBuilder:
         from .config import read_xmake_config
         directory = ini_path.parent
         xmake_path = directory / "xmake.lua"
-        xmake = None
-        if xmake_path.exists():
-            xmake = XMaker()
         ini_info = read_xmake_config(ini_path)
         entrypoints = ini_info.entrypoints
         module = common.Module(ini_info.module, directory)
         metadata = common.make_metadata(module, ini_info)
+        xmake = None
+        if xmake_path.exists():
+            xmaker = ini_info.dtool.get("xmaker", {})
+            xmake = XMaker(xmaker.get("xmake", "xmake"),
+                           xmaker.get("root", "."),
+                           xmaker.get("out", "."))
         return cls(
             directory, module, metadata, entrypoints, target_fp, ini_info.data_directory, xmake
         )
