@@ -29,7 +29,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependence = ["pathspec", "packaging"]
+dependencies = ["pathspec", "packaging"]
 
 [project.optional-dependencies]
 dev = ["pytest-cov"]
