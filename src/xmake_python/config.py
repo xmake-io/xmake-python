@@ -73,7 +73,7 @@ default_license_files_globs = ['COPYING*', 'LICEN[CS]E*']
 license_files_allowed_chars = re.compile(r'^[\w\-\.\/\*\?\[\]]+$')
 
 
-def read_flit_config(path):
+def read_xmake_config(path):
     """Read and check the `pyproject.toml` file with data about the package.
     """
     d = tomllib.loads(path.read_text('utf-8'))
@@ -83,25 +83,25 @@ def read_flit_config(path):
 class EntryPointsConflict(ConfigError):
     def __str__(self):
         return ('Please specify console_scripts entry points, or [scripts] in '
-            'flit config, not both.')
+            'xmake config, not both.')
 
 def prep_toml_config(d, path):
     """Validate config loaded from pyproject.toml and prepare common metadata
 
     Returns a LoadedConfig object.
     """
-    dtool = d.get('tool', {}).get('flit', {})
+    dtool = d.get('tool', {}).get('xmake', {})
 
     if 'project' in d:
         # Metadata in [project] table (PEP 621)
         if 'metadata' in dtool:
             raise ConfigError(
-                "Use [project] table for metadata or [tool.flit.metadata], not both."
+                "Use [project] table for metadata or [tool.xmake.metadata], not both."
             )
         if ('scripts' in dtool) or ('entrypoints' in dtool):
             raise ConfigError(
-                "Don't mix [project] metadata with [tool.flit.scripts] or "
-                "[tool.flit.entrypoints]. Use [project.scripts],"
+                "Don't mix [project] metadata with [tool.xmake.scripts] or "
+                "[tool.xmake.entrypoints]. Use [project.scripts],"
                 "[project.gui-scripts] or [project.entry-points] as replacements."
             )
         loaded_cfg = read_pep621_metadata(d['project'], path)
@@ -110,11 +110,11 @@ def prep_toml_config(d, path):
         if 'name' in module_tbl:
             loaded_cfg.module = module_tbl['name']
     elif 'metadata' in dtool:
-        # Metadata in [tool.flit.metadata] (pre PEP 621 format)
+        # Metadata in [tool.xmake.metadata] (pre PEP 621 format)
         if 'module' in dtool:
             raise ConfigError(
-                "Use [tool.flit.module] table with new-style [project] metadata, "
-                "not [tool.flit.metadata]"
+                "Use [tool.xmake.module] table with new-style [project] metadata, "
+                "not [tool.xmake.metadata]"
             )
         loaded_cfg = _prep_metadata(dtool['metadata'], path)
         loaded_cfg.dynamic_metadata = ['version', 'description']
@@ -126,7 +126,7 @@ def prep_toml_config(d, path):
             loaded_cfg.add_scripts(dict(dtool['scripts']))
     else:
         raise ConfigError(
-            "Neither [project] nor [tool.flit.metadata] found in pyproject.toml"
+            "Neither [project] nor [tool.xmake.metadata] found in pyproject.toml"
         )
 
     unknown_sections = set(dtool) - {
@@ -135,14 +135,14 @@ def prep_toml_config(d, path):
     unknown_sections = [s for s in unknown_sections if not s.lower().startswith('x-')]
     if unknown_sections:
         raise ConfigError('Unexpected tables in pyproject.toml: ' + ', '.join(
-            '[tool.flit.{}]'.format(s) for s in unknown_sections
+            '[tool.xmake.{}]'.format(s) for s in unknown_sections
         ))
 
     if 'sdist' in dtool:
         unknown_keys = set(dtool['sdist']) - {'include', 'exclude'}
         if unknown_keys:
             raise ConfigError(
-                "Unknown keys in [tool.flit.sdist]:" + ", ".join(unknown_keys)
+                "Unknown keys in [tool.xmake.sdist]:" + ", ".join(unknown_keys)
             )
 
         loaded_cfg.sdist_include_patterns = _check_glob_patterns(
@@ -158,7 +158,7 @@ def prep_toml_config(d, path):
 
     data_dir = dtool.get('external-data', {}).get('directory', None)
     if data_dir is not None:
-        toml_key = "tool.flit.external-data.directory"
+        toml_key = "tool.xmake.external-data.directory"
         if not isinstance(data_dir, str):
             raise ConfigError(f"{toml_key} must be a string")
 
@@ -192,7 +192,7 @@ def flatten_entrypoints(ep):
     [entrypoints."a.b"]  # {'entrypoints': {'a.b': {}}}
 
     But since there isn't a need for arbitrarily nested mappings in entrypoints,
-    flit allows you to use the former. This flattens the nested dictionaries
+    xmake allows you to use the former. This flattens the nested dictionaries
     from loading pyproject.toml.
     """
     def _flatten(d, prefix):
@@ -755,7 +755,7 @@ def read_pep621_metadata(proj, path) -> LoadedConfig:
         unrec_dynamic = dynamic - {'version', 'description'}
         if unrec_dynamic:
             raise ConfigError(
-                "flit only supports dynamic metadata for 'version' & 'description'"
+                "xmake only supports dynamic metadata for 'version' & 'description'"
             )
         if dynamic.intersection(proj):
             raise ConfigError(
@@ -875,8 +875,8 @@ def normalise_compound_license_expr(s: str) -> str:
             reason = f"a license ID or expression should follow '{last_part}'"
             raise ConfigError(invalid_msg.format(s=s, reason=reason))
     except ConfigError:
-        if os.environ.get('FLIT_ALLOW_INVALID'):
-            log.warning(f"Invalid license ID {s!r} allowed by FLIT_ALLOW_INVALID")
+        if os.environ.get('XMAKE_ALLOW_INVALID'):
+            log.warning(f"Invalid license ID {s!r} allowed by XMAKE_ALLOW_INVALID")
             return s
         raise
 
