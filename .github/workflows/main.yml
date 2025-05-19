@@ -58,16 +58,7 @@ jobs:
     runs-on: ${{matrix.runs-on}}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{env.python-version}}
-          cache: ${{env.cache}}
-          cache-dependency-path: |-
-            requirements.txt
-            requirements/dev.txt
-      - name: Install dependencies
-        run: |
-          pip install uv
+      - uses: astral-sh/setup-uv@v6
       - name: Build
         run: |
           uv build
