@@ -42,7 +42,7 @@ email = "waruqi@gmail.com"
 text = "GPL v3"
 
 [project.urls]
-Homepage = "https://xmake-python.readthedocs.io"
+Homepage = "https://xmake.io/"
 Download = "https://github.com/xmake-io/xmake-python/releases"
 "Bug Report" = "https://github.com/xmake-io/xmake-python/issues"
 Source = "https://github.com/xmake-io/xmake-python"
