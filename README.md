@@ -2,8 +2,9 @@
 
 A python build system based on xmake to output sdist/wheel file respecting PEP517.
 
-- [ ] install xmake from PYPI when it cannot be searched in $PATH
-- [ ] provide some path (like scikit-build-core's `SKBUILD_PLATLIB_DIR`) to install python binary module (XXX.cpython-313-x86_64-linux-gnu.so)
+- [ ] install xmake from PYPI when it cannot be searched in `$PATH`
+- [ ] provide some path (like scikit-build-core's `SKBUILD_PLATLIB_DIR`)
+  to install python binary module (XXX.cpython-313-x86_64-linux-gnu.so)
 
 ## Usage
 
@@ -15,7 +16,7 @@ requires = ["xmake-python"]
 build-backend = "xmake_python"
 ```
 
-[example](tests/project/example)
+[examples](tests/examples)
 
 ## Introduction
 

@@ -1,4 +1,4 @@
-# example
+# cython example
 
 Run a frontend:
 
