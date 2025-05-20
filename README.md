@@ -51,6 +51,7 @@ should be as fast as ninja, as easy as meson, as powerful as cmake.
 
 ## TODO
 
+- [ ] get project version from `xmake.lua`
 - [ ] provide some path (like scikit-build-core's `SKBUILD_PLATLIB_DIR`)
   to install python binary module (XXX.cpython-313-x86_64-linux-gnu.so)
 
