@@ -18,7 +18,8 @@ log = logging.getLogger(__name__)
 # PEP 517 specifies that the CWD will always be the source tree
 pyproj_toml = Path('pyproject.toml')
 
-def get_requires_for_build_wheel(config_settings=None):
+
+def get_requires_for_build_sdist(config_settings=None):
     """Returns a list of requirements for building, as strings"""
     info = read_xmake_config(pyproj_toml)
     # If we can get version & description from pyproject.toml (PEP 621), or
@@ -36,11 +37,6 @@ def get_requires_for_build_wheel(config_settings=None):
     else:
         return []
 
-# Requirements to build an sdist are the same as for a wheel
-get_requires_for_build_sdist = get_requires_for_build_wheel
-
-# Requirements to build an editable are the same as for a wheel
-get_requires_for_build_editable = get_requires_for_build_wheel
 
 def prepare_metadata_for_build_wheel(metadata_directory, config_settings=None):
     """Creates {metadata_directory}/foo-1.2.dist-info"""
@@ -81,3 +77,23 @@ def build_sdist(sdist_directory, config_settings=None):
     """Builds an sdist, places it in sdist_directory"""
     path = SdistBuilder.from_ini_path(pyproj_toml).build(Path(sdist_directory))
     return path.name
+
+
+def get_requires_for_build_wheel(
+    config_settings: dict[str, str | list[str]] | None = None,
+) -> list[str]:
+    from .builder.get_requires import GetRequires
+
+    requires = GetRequires.from_config_settings(config_settings)
+
+    # These are only injected if xmake is required for the wheel step
+    xmake_requires = [*requires.xmake()]
+
+    return [
+        *xmake_requires,
+        # *requires.dynamic_metadata(),
+    ]
+
+
+# Requirements to build an editable are the same as for a wheel
+get_requires_for_build_editable = get_requires_for_build_wheel

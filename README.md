@@ -51,7 +51,6 @@ should be as fast as ninja, as easy as meson, as powerful as cmake.
 
 ## TODO
 
-- [ ] install xmake from PYPI when it cannot be searched in `$PATH`
 - [ ] provide some path (like scikit-build-core's `SKBUILD_PLATLIB_DIR`)
   to install python binary module (XXX.cpython-313-x86_64-linux-gnu.so)
 
@@ -69,29 +68,36 @@ build-backend = "xmake_python"
 
 ## Introduction
 
-different from other languages, python build system is consist of two parts:
+Python build system support build sdist, wheel and editable installation.
+Different from other languages, python build system is consist of two parts:
 
 ### Frontends
 
-- [build](http://pypi.org/project/build/): `python -m build`
-- [uv](https://pypi.org/project/uv/): `uv build`
+- `pyproject-build`/[`python -m build`](http://pypi.org/project/build/):
+  stardard realization.
+- [`uv build`](https://pypi.org/project/uv/): the fastest frontend currently.
+- [`pip wheel`](https://github.com/pypa/pip/): pip is an incomplete frontend
+  because build sdist is still a
+  [feature request](https://github.com/pypa/pip/issues/3513).
 
 In charge of:
 
-- install `build-system.requires`
-- call `build-system.build-backend`'s `build_wheel()` and `build_sdist()`.
+- install required build dependencies from `build-system.requires`
+- install optional build dependencies from the result of calling
+  `build-system.build-backend`'s `get_requires_for_build_{sdist,wheel,editable}()`
+- call `build-system.build-backend`'s `build_{sdist,wheel,editable}()`
 
 ### Backends
 
 Refer
 [some python build system backends](https://scikit-build-core.readthedocs.io/en/latest/#other-projects-for-building)
 
-Backend can install optional requires. For example,
+Backend can install optional build dependencies. For example,
 [scikit-build-core](https://pypi.org/project/scikit-build-core/)
 will install [cmake](http://pypi.org/project/cmake) and [ninja](https://pypi.org/project/ninja/)
 only when cmake and ninja are not found in `$PATH`.
 
-We project to provide two python packages. One is a
+We provide two python packages. One is a
 [wheel for xmake](https://github.com/xmake-io/xmake-wheel/), like cmake and
 ninja. Another is a python build system backend, which will install xmake wheel
 when xmake is not found in `$PATH`.

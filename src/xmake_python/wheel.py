@@ -100,7 +100,8 @@ class WheelBuilder:
         if xmake_path.exists() or xmaker != {}:
             xmake = XMaker(xmaker.get("xmake", "xmake"),
                            xmaker.get("root", "."),
-                           xmaker.get("out", "."))
+                           xmaker.get("out", "."),
+                           xmaker.get("command", ""))
         return cls(
             directory, module, metadata, entrypoints, target_fp, ini_info.data_directory, xmake
         )
