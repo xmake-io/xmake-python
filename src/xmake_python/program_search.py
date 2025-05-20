@@ -59,12 +59,15 @@ def get_xmake_program(xmake_path: Path) -> Program:
     """
     Get the Program (with version) for xmake given a path. The version will be
     None if it cannot be determined.
+
+    `<https://github.com/xmake-io/xmake/discussions/6473>_`
     """
     try:
-        result = Run(timeout=TIMEOUT).capture(xmake_path, "--version")
+        result = Run(timeout=TIMEOUT).capture(xmake_path, "l", "xmake.version")
         try:
+            v, _, d = result.stdout.partition("+")
             version = Version(
-                result.stdout.splitlines()[0].split(",")[0].split(" ")[-1]
+                v.split("m")[-1] + _ + d.split("\x1b")[0]
             )
             logger.info("xmake version via --version: {}", version)
             return Program(xmake_path, version)
