@@ -70,12 +70,13 @@ build-backend = "xmake_python"
 ## Introduction
 
 Python build system support build sdist, wheel and editable installation.
-Different from other languages, python build system is consist of two parts:
+According to [PEP517](https://peps.python.org/pep-0517/), python build system
+is consist of two parts:
 
 ### Frontends
 
 - `pyproject-build`/[`python -m build`](http://pypi.org/project/build/):
-  stardard realization.
+  standard realization.
 - [`uv build`](https://pypi.org/project/uv/): the fastest frontend currently.
 - [`pip wheel`](https://github.com/pypa/pip/): pip is an incomplete frontend
   because build sdist is still a
