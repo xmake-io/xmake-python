@@ -11,7 +11,7 @@ from ..program_search import (
     best_program,
     get_xmake_programs,
 )
-from ..sdist import SdistBuilder
+from ..wheel import WheelBuilder
 
 if TYPE_CHECKING:
     from collections.abc import Generator, Mapping
@@ -27,13 +27,13 @@ def __dir__() -> list[str]:
 
 def _load_scikit_build_settings(
     config_settings: Mapping[str, list[str] | str] | None = None,
-) -> SdistBuilder:
-    return SdistBuilder.from_ini_path(Path("pyproject.toml"))
+) -> WheelBuilder:
+    return WheelBuilder.from_ini_path(Path("pyproject.toml"), None)
 
 
 @dataclasses.dataclass(frozen=True)
 class GetRequires:
-    settings: SdistBuilder = dataclasses.field(
+    settings: WheelBuilder = dataclasses.field(
         default_factory=_load_scikit_build_settings
     )
 
@@ -44,9 +44,7 @@ class GetRequires:
         return cls(_load_scikit_build_settings(config_settings))
 
     def xmake(self) -> Generator[str, None, None]:
-        directory = Path("pyproject.toml").parent
-        xmake_path = directory / "xmake.lua"
-        if not xmake_path.exists():
+        if self.settings.xmake is None:
             return
         if os.environ.get("XMAKE_EXECUTABLE", ""):
             return

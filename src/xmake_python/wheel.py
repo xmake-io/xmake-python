@@ -78,8 +78,11 @@ class WheelBuilder:
         self.source_time_stamp = zip_timestamp_from_env()
 
         # Open the zip file ready to write
-        self.wheel_zip = zipfile.ZipFile(target_fp, 'w',
-                             compression=zipfile.ZIP_DEFLATED)
+        self.wheel_zip = None
+        # skip creating wheel for get_requires_for_build_wheel()
+        if target_fp is not None:
+            self.wheel_zip = zipfile.ZipFile(target_fp, 'w',
+                                 compression=zipfile.ZIP_DEFLATED)
         self.xmake = xmake
         if xmake:
             self.output = xmake.output
@@ -144,13 +147,14 @@ class WheelBuilder:
         zinfo.compress_type = zipfile.ZIP_DEFLATED
 
         hashsum = hashlib.sha256()
-        with open(full_path, 'rb') as src, self.wheel_zip.open(zinfo, 'w') as dst:
-            while True:
-                buf = src.read(1024 * 8)
-                if not buf:
-                    break
-                hashsum.update(buf)
-                dst.write(buf)
+        if self.wheel_zip:
+            with open(full_path, 'rb') as src, self.wheel_zip.open(zinfo, 'w') as dst:
+                while True:
+                    buf = src.read(1024 * 8)
+                    if not buf:
+                        break
+                    hashsum.update(buf)
+                    dst.write(buf)
 
         size = os.stat(full_path).st_size
         hash_digest = urlsafe_b64encode(hashsum.digest()).decode('ascii').rstrip('=')
@@ -172,7 +176,8 @@ class WheelBuilder:
         b = sio.getvalue().encode('utf-8')
         hashsum = hashlib.sha256(b)
         hash_digest = urlsafe_b64encode(hashsum.digest()).decode('ascii').rstrip('=')
-        self.wheel_zip.writestr(zi, b, compress_type=zipfile.ZIP_DEFLATED)
+        if self.wheel_zip:
+            self.wheel_zip.writestr(zi, b, compress_type=zipfile.ZIP_DEFLATED)
         self.records.append((rel_path, hash_digest, len(b)))
 
     def copy_module(self):
@@ -256,7 +261,8 @@ class WheelBuilder:
             self.write_metadata()
             self.write_record()
         finally:
-            self.wheel_zip.close()
+            if self.wheel_zip:
+                self.wheel_zip.close()
 
 def make_wheel_in(ini_path, wheel_directory, editable=False):
     # We don't know the final filename until metadata is loaded, so write to
