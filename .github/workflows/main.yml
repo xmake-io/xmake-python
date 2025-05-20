@@ -67,13 +67,13 @@ jobs:
         with:
           password: ${{secrets.PYPI_API_TOKEN}}
       - uses: actions/upload-artifact@v4
-        if: "! startsWith(github.ref, 'refs/tags/')"
+        if: runner.os == 'Linux' && ! startsWith(github.ref, 'refs/tags/')
         with:
           name: artifact-${{matrix.runs-on}}
           path: |
             ${{env.files}}
       - uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
+        if: runner.os == 'Linux' && startsWith(github.ref, 'refs/tags/')
         with:
           # body_path: build/CHANGELOG.md
           files: |
