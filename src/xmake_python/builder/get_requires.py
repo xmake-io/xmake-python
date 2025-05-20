@@ -44,6 +44,10 @@ class GetRequires:
         return cls(_load_scikit_build_settings(config_settings))
 
     def xmake(self) -> Generator[str, None, None]:
+        directory = Path("pyproject.toml").parent
+        xmake_path = directory / "xmake.lua"
+        if not xmake_path.exists():
+            return
         if os.environ.get("XMAKE_EXECUTABLE", ""):
             return
 
@@ -56,15 +60,18 @@ class GetRequires:
         #     yield f"xmake{xmake_verset}"
         #     return
 
-        xmake = best_program(get_xmake_programs(module=False), version=xmake_verset)
+        xmake = best_program(
+            get_xmake_programs(module=False), version=xmake_verset
+        )
         if xmake is None:
             if xmake_verset is None:
                 yield "xmake-wheel"
             else:
                 yield f"xmake-wheel{xmake_verset}"
             return
-        logger.debug("Found system xmake: {} - not requiring PyPI package", xmake)
-
+        logger.debug(
+            "Found system xmake: {} - not requiring PyPI package", xmake
+        )
 
     def dynamic_metadata(self) -> Generator[str, None, None]:
         for build_require in self.settings.metadata.build.requires:
