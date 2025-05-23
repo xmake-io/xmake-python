@@ -84,7 +84,8 @@ class WheelBuilder:
             self.wheel_zip = zipfile.ZipFile(target_fp, 'w',
                                  compression=zipfile.ZIP_DEFLATED)
         self.temp = tempfile.TemporaryDirectory()
-        self.data = Path(self.temp.name) / "data"
+        self.root = Path(self.temp.name)
+        self.data = self.root / "data"
         if xmake:
             xmake.tempname = self.temp.name
         self.xmake = xmake
@@ -183,10 +184,9 @@ class WheelBuilder:
 
     def copy_module(self):
         log.info('Copying package file(s) from %s', self.module.path)
-        source_dir = str(self.module.source_dir)
 
-        for full_path in common.walk_data_dir(self.data.parent / "platlib"):
-            rel_path = os.path.relpath(full_path, self.data.parent / "platlib")
+        for full_path in common.walk_data_dir(self.root / "platlib"):
+            rel_path = os.path.relpath(full_path, self.root / "platlib")
             self._add_file(full_path, rel_path)
 
     def add_pth(self):
@@ -200,16 +200,28 @@ class WheelBuilder:
         for full_path in common.walk_data_dir(self.data_directory):
             rel_path = os.path.relpath(full_path, self.data_directory)
             self._add_file(full_path, dir_in_whl + rel_path)
-        if os.path.exists(self.data):
-            for name in os.listdir(self.data):
-                new_name = name
-                if name == "bin":
-                    new_name = "scripts"
-                elif name == "include":
-                    new_name = "headers"
-                for full_path in common.walk_data_dir(self.data / name):
-                    rel_path = os.path.relpath(full_path, self.data).partition(name + os.path.sep)[2]
-                    self._add_file(full_path, dir_in_whl + new_name + os.path.sep + rel_path)
+        for name in os.listdir(self.data):
+            if name in {"bin", "include"}:
+                continue
+            for full_path in common.walk_data_dir(self.data / name):
+                rel_path = os.path.relpath(full_path, self.data).partition(name + os.path.sep)[2]
+                self._add_file(full_path, dir_in_whl + name + os.path.sep + rel_path)
+
+    def add_scripts_directory(self):
+        dir_in_whl = '{}.data/scripts/'.format(
+            common.normalize_dist_name(self.metadata.name, self.metadata.version)
+        )
+        for full_path in common.walk_data_dir(Path(self.data) / "bin"):
+            rel_path = os.path.relpath(full_path, Path(self.data) / "bin")
+            self._add_file(full_path, dir_in_whl + rel_path)
+
+    def add_headers_directory(self):
+        dir_in_whl = '{}.data/headers/'.format(
+            common.normalize_dist_name(self.metadata.name, self.metadata.version)
+        )
+        for full_path in common.walk_data_dir(Path(self.data) / "include"):
+            rel_path = os.path.relpath(full_path, Path(self.data) / "include")
+            self._add_file(full_path, dir_in_whl + rel_path)
 
     def write_metadata(self):
         log.info('Writing metadata files')
@@ -220,8 +232,8 @@ class WheelBuilder:
 
         for file in self.metadata.license_files:
             self._add_file(self.directory / file, '%s/licenses/%s' % (self.dist_info, file))
-        for full_path in common.walk_data_dir(self.data.parent / "metadata"):
-            rel_path = os.path.relpath(full_path, self.data.parent / "metadata")
+        for full_path in common.walk_data_dir(self.root / "metadata"):
+            rel_path = os.path.relpath(full_path, self.root / "metadata")
             self._add_file(full_path, '%s/%s' % (self.dist_info, rel_path))
 
         with self._write_to_zip(self.dist_info + '/WHEEL') as f:
@@ -251,6 +263,8 @@ class WheelBuilder:
                 else:
                     self.copy_module()
                 self.add_data_directory()
+                self.add_scripts_directory()
+                self.add_headers_directory()
                 self.write_metadata()
                 self.write_record()
             finally:

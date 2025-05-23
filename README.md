@@ -114,30 +114,30 @@ optionally contains these files, and they will be installed to:
   - `example/__init__.py`: `/usr/lib/python3.13/site-packages/example/__init__.py`
   - `example.cpython-313-x86_64-linux-gnu.so`: `/usr/lib/python3.13/site-packages/example.cpython-313-x86_64-linux-gnu.so`
   - `example/_C.cpython-313-x86_64-linux-gnu.so`: `/usr/lib/python3.13/site-packages/example/_C.cpython-313-x86_64-linux-gnu.so`
+- attached data
+  - `example-0.0.1.data/scripts/example`: `/usr/bin/example`
+  - `example-0.0.1.data/headers/example.h`: `/usr/include/python3.13/example.h`
+  - `example-0.0.1.data/data/other/data.txt`: `/usr/other/data.txt`
 - metadata
   - `example-0.0.1.dist-info/WHEEL`: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/WHEEL`
   - `example-0.0.1.dist-info/METADATA`: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/METADATA`
   - `example-0.0.1.dist-info/RECORD`: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/RECORD`
   - `example-0.0.1.dist-info/licenses/LICENSE`: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/licenses/LICENSE`
-- attached data
-  - `example-0.0.1.data/scripts/example`: `/usr/bin/example`
-  - `example-0.0.1.data/headers/example.h`: `/usr/include/python3.13/example.h`
-  - `example-0.0.1.data/other/data.txt`: `/usr/other/data.txt`
 
 So we create a [xmake.lua](src/xmake_python/templates/xmake.lua), which defines
-some variables, and when `xmake install -o/tmp/tmpXXXXXXXX/data`, they will be
+some variables, and when `xmake install -o/tmp/tmpXXXXXXXX`, they will be
 some paths prefixed with `/tmp/tmpXXXXXXXX`, and finally packaged to:
 
-- xmake-platlib: `/../platlib` -> `/tmp/tmpXXXXXXXX/platlib` -> `/`
-- xmake-scripts: `/bin` -> `/tmp/tmpXXXXXXXX/data/bin` ->
+- xmake-platlib: `/platlib` -> `/tmp/tmpXXXXXXXX/platlib` -> `/`
+- xmake-scripts: `/data/bin` -> `/tmp/tmpXXXXXXXX/data/bin` ->
   `example-0.0.1.data/scripts/`
-- xmake-headers: `/include` -> `/tmp/tmpXXXXXXXX/data/include` ->
+- xmake-headers: `/data/include` -> `/tmp/tmpXXXXXXXX/data/include` ->
   `example-0.0.1.data/headers/`
-- xmake-data: `/` -> `/tmp/tmpXXXXXXXX/data` ->
-  `example-0.0.1.data/`
-- xmake-metadata: `/` -> `/tmp/tmpXXXXXXXX/metadata` ->
+- xmake-data: `/data` -> `/tmp/tmpXXXXXXXX/data` ->
+  `example-0.0.1.data/data/`
+- xmake-metadata: `/metadata` -> `/tmp/tmpXXXXXXXX/metadata` ->
   `example-0.0.1.dist-info/`
-- xmake-null: `/../null` -> `/tmp/tmpXXXXXXXX/null` -> will not be packaged
+- xmake-null: `/null` -> `/tmp/tmpXXXXXXXX/null` -> will not be packaged
 
 So you can create 3 kinds packages:
 

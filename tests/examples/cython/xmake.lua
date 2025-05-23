@@ -47,9 +47,9 @@ end
 
 target("c")
 do
-set_prefixdir("/", {libdir = "$(xmake-platlib)/example"})
-add_rules("python.library", "python.cython", { soabi = true })
-add_files("*.py")
-add_packages("python")
-add_installfiles("src/example/*.py", {prefixdir= "$(xmake-platlib)"})
+    set_prefixdir("/", {libdir = "$(xmake-platlib)/example"})
+    add_rules("python.library", "python.cython", { soabi = true })
+    add_files("*.py")
+    add_packages("python")
+    add_installfiles("src/example/*.py", {prefixdir= "$(xmake-platlib)/example"})
 end

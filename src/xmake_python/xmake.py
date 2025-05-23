@@ -26,12 +26,4 @@ class XMaker:
         run([self.xmake, "-y", "-P", self.tempname, "--verbose"])
 
     def install(self):
-        # https://github.com/xmake-io/xmake/discussions/6497
-        run([
-            self.xmake,
-            "install",
-            "-P",
-            self.tempname,
-            "-o",
-            str(Path(self.tempname) / "data"),
-        ])
+        run([self.xmake, "install", "-P", self.tempname, "-o", self.tempname])
