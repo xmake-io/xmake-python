@@ -31,6 +31,7 @@ jobs:
     runs-on: ${{matrix.runs-on}}
     steps:
       - uses: actions/checkout@v4
+      - uses: xmake-io/github-action-setup-xmake@v1
       - uses: actions/setup-python@v5
         with:
           python-version: ${{env.python-version}}
@@ -58,6 +59,7 @@ jobs:
     runs-on: ${{matrix.runs-on}}
     steps:
       - uses: actions/checkout@v4
+      - uses: xmake-io/github-action-setup-xmake@v1
       - uses: astral-sh/setup-uv@v6
       - name: Build
         run: |
