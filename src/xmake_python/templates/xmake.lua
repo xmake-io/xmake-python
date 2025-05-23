@@ -22,9 +22,9 @@ option("xmake-null")
 do
     set_default("/../null")
 end
-option("xmake-project")
+option("xmake-root")
 do
-    set_default("{project}")
+    set_default("{root}")
 end
 option_end()
 set_prefixdir("/data", {{bindir = "bin", libdir = "lib", includedir = "include"}})
