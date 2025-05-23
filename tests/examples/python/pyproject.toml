@@ -1,0 +1,13 @@
+[build-system]
+requires = ["xmake-python"]
+build-backend = "xmake_python"
+
+[project]
+name = 'example'
+version = '0.0.1'
+description = 'example for pybind11'
+readme = 'README.md'
+
+[tool.xmake.xmaker]
+# https://github.com/xmake-io/xmake/issues/4537
+command = "--policies=package.include_external_headers:n"

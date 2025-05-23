@@ -2,6 +2,7 @@ add_rules("mode.debug", "mode.release")
 add_requires("python 3.x")
 
 rule("python.cython")
+do
     set_extensions(".py", ".pyx")
 
     on_load(function (target)
@@ -42,9 +43,13 @@ rule("python.cython")
         batchcmds:set_depmtime(os.mtime(objectfile))
         batchcmds:set_depcache(target:dependfile(objectfile))
     end)
+end
 
 target("c")
-set_prefixdir("/", {libdir = "src/example"})
+do
+set_prefixdir("/", {libdir = "$(xmake-platlib)/example"})
 add_rules("python.library", "python.cython", { soabi = true })
 add_files("*.py")
 add_packages("python")
+add_installfiles("src/example/*.py", {prefixdir= "$(xmake-platlib)"})
+end

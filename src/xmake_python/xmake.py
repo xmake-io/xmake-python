@@ -8,17 +8,30 @@ from shlex import split
 class XMaker:
     xmake: str = "xmake"
     root: str = "."
-    out: str = "."
     command: str = ""
-
-    def __post_init__(self):
-        self.output = str(Path(self.root) / self.out)
+    tempname: str = ""
+    project: str = ""
 
     def config(self):
-        run([self.xmake, "config", "-P", self.root] + split(self.command))
+        text = ""
+        # src/xmake_python/templates/xmake.lua
+        with open(Path(__file__).parent / "templates" / "xmake.lua") as f:
+            text = f.read()
+        text = text.format(project=self.project)
+        with open(Path(self.tempname) / "xmake.lua", "w") as f:
+            f.write(text)
+        run([self.xmake, "config", "-P", self.tempname] + split(self.command))
 
     def build(self):
-        run([self.xmake, "-P", self.root, "--verbose"])
+        run([self.xmake, "-y", "-P", self.tempname, "--verbose"])
 
     def install(self):
-        run([self.xmake, "install", "-P", self.root, "-o", self.out])
+        # https://github.com/xmake-io/xmake/discussions/6497
+        run([
+            self.xmake,
+            "install",
+            "-P",
+            self.tempname,
+            "-o",
+            str(Path(self.tempname) / "data"),
+        ])
