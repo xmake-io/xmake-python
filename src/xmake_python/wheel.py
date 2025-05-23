@@ -200,6 +200,8 @@ class WheelBuilder:
         for full_path in common.walk_data_dir(self.data_directory):
             rel_path = os.path.relpath(full_path, self.data_directory)
             self._add_file(full_path, dir_in_whl + rel_path)
+        if not self.data.exists():
+            return
         for name in os.listdir(self.data):
             if name in {"bin", "include"}:
                 continue

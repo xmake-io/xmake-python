@@ -1,26 +1,26 @@
 option("xmake-platlib")
 do
-    set_default("/platlib")
+    set_default("/../platlib")
 end
 option("xmake-scripts")
 do
-    set_default("/data/bin")
+    set_default("/bin")
 end
 option("xmake-headers")
 do
-    set_default("/data/include")
+    set_default("/include")
 end
 option("xmake-data")
 do
-    set_default("/data")
+    set_default("/")
 end
 option("xmake-metadata")
 do
-    set_default("/metadata")
+    set_default("/../metadata")
 end
 option("xmake-null")
 do
-    set_default("/null")
+    set_default("/../null")
 end
 option("xmake-project")
 do

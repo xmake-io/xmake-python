@@ -116,7 +116,7 @@ optionally contains these files, and they will be installed to:
   - `example/_C.cpython-313-x86_64-linux-gnu.so`: `/usr/lib/python3.13/site-packages/example/_C.cpython-313-x86_64-linux-gnu.so`
 - attached data
   - `example-0.0.1.data/scripts/example`: `/usr/bin/example`
-  - `example-0.0.1.data/headers/example.h`: `/usr/include/python3.13/example.h`
+  - `example-0.0.1.data/headers/example.h`: `/usr/include/python3.13/example/example.h`
   - `example-0.0.1.data/data/other/data.txt`: `/usr/other/data.txt`
 - metadata
   - `example-0.0.1.dist-info/WHEEL`: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/WHEEL`
