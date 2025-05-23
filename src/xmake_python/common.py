@@ -29,6 +29,9 @@ class Module:
         src_py_file = directory / 'src' / (name_as_path+'.py')
 
         existing = set()
+        self.path = src_pkg_dir
+        self.is_package = True
+        self.prefix = 'src'
         if pkg_dir.is_dir():
             self.path = pkg_dir
             self.is_package = True
@@ -50,13 +53,13 @@ class Module:
             self.prefix = 'src'
             existing.add(src_py_file)
 
-        if len(existing) > 1:
-            raise ValueError(
-                "Multiple files or folders could be module {}: {}"
-                .format(name, ", ".join([str(p) for p in sorted(existing)]))
-            )
-        elif not existing:
-            raise ValueError("No file/folder found for module {}".format(name))
+        # if len(existing) > 1:
+        #     raise ValueError(
+        #         "Multiple files or folders could be module {}: {}"
+        #         .format(name, ", ".join([str(p) for p in sorted(existing)]))
+        #     )
+        # elif not existing:
+        #     raise ValueError("No file/folder found for module {}".format(name))
 
         self.source_dir = directory / self.prefix
 

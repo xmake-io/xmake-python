@@ -21,21 +21,22 @@ pyproj_toml = Path('pyproject.toml')
 
 def get_requires_for_build_sdist(config_settings=None):
     """Returns a list of requirements for building, as strings"""
-    info = read_xmake_config(pyproj_toml)
+    # info = read_xmake_config(pyproj_toml)
     # If we can get version & description from pyproject.toml (PEP 621), or
     # by parsing the module (_via_ast), we don't need any extra
     # dependencies. If not, we'll need to try importing it, so report any
     # runtime dependencies as build dependencies.
-    want_summary = 'description' in info.dynamic_metadata
-    want_version = 'version' in info.dynamic_metadata
-
-    module = Module(info.module, Path.cwd())
-    docstring, version = get_docstring_and_version_via_ast(module)
-
-    if (want_summary and not docstring) or (want_version and not version):
-        return info.metadata.get('requires_dist', [])
-    else:
-        return []
+    # want_summary = 'description' in info.dynamic_metadata
+    # want_version = 'version' in info.dynamic_metadata
+    #
+    # module = Module(info.module, Path.cwd())
+    # docstring, version = get_docstring_and_version_via_ast(module)
+    #
+    # if (want_summary and not docstring) or (want_version and not version):
+    #     return info.metadata.get('requires_dist', [])
+    # else:
+    #     return []
+    return []
 
 
 def prepare_metadata_for_build_wheel(metadata_directory, config_settings=None):

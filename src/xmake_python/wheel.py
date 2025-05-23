@@ -83,11 +83,11 @@ class WheelBuilder:
         if target_fp is not None:
             self.wheel_zip = zipfile.ZipFile(target_fp, 'w',
                                  compression=zipfile.ZIP_DEFLATED)
-        self.xmake = xmake
+        self.temp = tempfile.TemporaryDirectory()
+        self.data = Path(self.temp.name) / "data"
         if xmake:
-            self.output = xmake.output
-        else:
-            self.output = "."
+            xmake.tempname = self.temp.name
+        self.xmake = xmake
 
     @classmethod
     def from_ini_path(cls, ini_path, target_fp):
@@ -103,8 +103,9 @@ class WheelBuilder:
         if xmake_path.exists() or xmaker != {}:
             xmake = XMaker(xmaker.get("xmake", "xmake"),
                            xmaker.get("root", "."),
-                           xmaker.get("out", "."),
-                           xmaker.get("command", ""))
+                           xmaker.get("command", ""),
+                           xmaker.get("tempname", ""),
+                           xmaker.get("project", os.path.abspath(".")))
         return cls(
             directory, module, metadata, entrypoints, target_fp, ini_info.data_directory, xmake
         )
@@ -184,8 +185,8 @@ class WheelBuilder:
         log.info('Copying package file(s) from %s', self.module.path)
         source_dir = str(self.module.source_dir)
 
-        for full_path in self.module.iter_files():
-            rel_path = osp.relpath(full_path, source_dir)
+        for full_path in common.walk_data_dir(self.data.parent / "platlib"):
+            rel_path = os.path.relpath(full_path, self.data.parent / "platlib")
             self._add_file(full_path, rel_path)
 
     def add_pth(self):
@@ -199,26 +200,16 @@ class WheelBuilder:
         for full_path in common.walk_data_dir(self.data_directory):
             rel_path = os.path.relpath(full_path, self.data_directory)
             self._add_file(full_path, dir_in_whl + rel_path)
-        for name in {"lib", "share"}:
-            for full_path in common.walk_data_dir(str(Path(self.output) / name)):
-                rel_path = os.path.relpath(full_path, self.data_directory).partition(name + os.path.sep)[2]
-                self._add_file(full_path, dir_in_whl + name + os.path.sep + rel_path)
-
-    def add_scripts_directory(self):
-        dir_in_whl = '{}.data/scripts/'.format(
-            common.normalize_dist_name(self.metadata.name, self.metadata.version)
-        )
-        for full_path in common.walk_data_dir(str(Path(self.output) / "bin")):
-            rel_path = os.path.relpath(full_path, self.data_directory).partition("bin" + os.path.sep)[2]
-            self._add_file(full_path, dir_in_whl + rel_path)
-
-    def add_headers_directory(self):
-        dir_in_whl = '{}.data/headers/'.format(
-            common.normalize_dist_name(self.metadata.name, self.metadata.version)
-        )
-        for full_path in common.walk_data_dir(str(Path(self.output) / "include")):
-            rel_path = os.path.relpath(full_path, self.data_directory).partition("include" + os.path.sep)[2]
-            self._add_file(full_path, dir_in_whl + rel_path)
+        if os.path.exists(self.data):
+            for name in os.listdir(self.data):
+                new_name = name
+                if name == "bin":
+                    new_name = "scripts"
+                elif name == "include":
+                    new_name = "headers"
+                for full_path in common.walk_data_dir(self.data / name):
+                    rel_path = os.path.relpath(full_path, self.data).partition(name + os.path.sep)[2]
+                    self._add_file(full_path, dir_in_whl + new_name + os.path.sep + rel_path)
 
     def write_metadata(self):
         log.info('Writing metadata files')
@@ -229,6 +220,9 @@ class WheelBuilder:
 
         for file in self.metadata.license_files:
             self._add_file(self.directory / file, '%s/licenses/%s' % (self.dist_info, file))
+        for full_path in common.walk_data_dir(self.data.parent / "metadata"):
+            rel_path = os.path.relpath(full_path, self.data.parent / "metadata")
+            self._add_file(full_path, '%s/%s' % (self.dist_info, rel_path))
 
         with self._write_to_zip(self.dist_info + '/WHEEL') as f:
             _write_wheel_file(f, supports_py2=self.metadata.supports_py2)
@@ -246,23 +240,22 @@ class WheelBuilder:
             f.write(self.dist_info + '/RECORD,,\n')
 
     def build(self, editable=False):
-        if self.xmake:
-            self.xmake.config()
-            self.xmake.build()
-            self.xmake.install()
-        try:
-            if editable:
-                self.add_pth()
-            else:
-                self.copy_module()
-            self.add_data_directory()
-            self.add_scripts_directory()
-            self.add_headers_directory()
-            self.write_metadata()
-            self.write_record()
-        finally:
-            if self.wheel_zip:
-                self.wheel_zip.close()
+        with self.temp:
+            if self.xmake:
+                self.xmake.config()
+                self.xmake.build()
+                self.xmake.install()
+            try:
+                if editable:
+                    self.add_pth()
+                else:
+                    self.copy_module()
+                self.add_data_directory()
+                self.write_metadata()
+                self.write_record()
+            finally:
+                if self.wheel_zip:
+                    self.wheel_zip.close()
 
 def make_wheel_in(ini_path, wheel_directory, editable=False):
     # We don't know the final filename until metadata is loaded, so write to
