@@ -89,6 +89,7 @@ class WheelBuilder:
         if xmake:
             xmake.tempname = self.temp.name
         self.xmake = xmake
+        self.is_build = False
 
     @classmethod
     def from_ini_path(cls, ini_path, target_fp):
@@ -118,7 +119,7 @@ class WheelBuilder:
     @property
     def wheel_filename(self):
         dist_name = common.normalize_dist_name(self.metadata.name, self.metadata.version)
-        if self.xmake:
+        if self.xmake and self.is_build:
             tag = str(WheelTag.compute_best([]))
         else:
             tag = ('py2.' if self.metadata.supports_py2 else '') + 'py3-none-any'
@@ -259,6 +260,8 @@ class WheelBuilder:
                 self.xmake.config()
                 self.xmake.build()
                 self.xmake.install()
+                if os.path.isdir("build"):
+                    self.is_build = True
             try:
                 if editable:
                     self.add_pth()

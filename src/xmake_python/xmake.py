@@ -1,3 +1,5 @@
+import os
+
 from dataclasses import dataclass
 from subprocess import run
 from pathlib import Path
@@ -20,10 +22,18 @@ class XMaker:
         text = text.format(project=self.project)
         with open(Path(self.tempname) / "xmake.lua", "w") as f:
             f.write(text)
-        run([self.xmake, "config", "-P", self.tempname] + split(self.command))
+        cmd = [
+            self.xmake,
+            "config",
+            "-P",
+            self.tempname,
+        ] + split(self.command)
+        run(cmd)
 
     def build(self):
-        run([self.xmake, "-y", "-P", self.tempname, "--verbose"])
+        cmd = [self.xmake, "-y", "-P", self.tempname, "--verbose"]
+        run(cmd)
 
     def install(self):
-        run([self.xmake, "install", "-P", self.tempname, "-o", self.tempname])
+        cmd = [self.xmake, "install", "-P", self.tempname, "-o", self.tempname]
+        run(cmd)
