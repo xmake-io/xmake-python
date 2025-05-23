@@ -22,15 +22,16 @@ class XMaker:
         cmd = [
             self.xmake,
             "config",
-            "-yP",
+            "-y",
+            "-P",
             self.tempname,
         ] + split(self.command)
         run(cmd)
 
     def build(self):
-        cmd = [self.xmake, "-yP", self.tempname, "--verbose"]
+        cmd = [self.xmake, "-y", "-P", self.tempname, "--verbose"]
         run(cmd)
 
     def install(self):
-        cmd = [self.xmake, "install", "-yP", self.tempname, "-o", self.tempname]
+        cmd = [self.xmake, "install", "-y", "-P", self.tempname, "-o", self.tempname]
         run(cmd)
