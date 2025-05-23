@@ -110,19 +110,19 @@ create a wheel file named `example-0.0.1-cp313-cp313-linux_x86_64.whl`, it
 optionally contains these files, and they will be installed to:
 
 - python module, can be pure python files or dynamic linked library
-  - example.py: `/usr/lib/python3.13/site-packages/example.py`
-  - example/__init__.py: `/usr/lib/python3.13/site-packages/example/__init__.py`
-  - example.cpython-313-x86_64-linux-gnu.so: `/usr/lib/python3.13/site-packages/example.cpython-313-x86_64-linux-gnu.so`
-  - example/\_C.cpython-313-x86_64-linux-gnu.so: `/usr/lib/python3.13/site-packages/example/_C.cpython-313-x86_64-linux-gnu.so`
+  - `example.py`: `/usr/lib/python3.13/site-packages/example.py`
+  - `example/__init__.py`: `/usr/lib/python3.13/site-packages/example/__init__.py`
+  - `example.cpython-313-x86_64-linux-gnu.so`: `/usr/lib/python3.13/site-packages/example.cpython-313-x86_64-linux-gnu.so`
+  - `example/_C.cpython-313-x86_64-linux-gnu.so`: `/usr/lib/python3.13/site-packages/example/_C.cpython-313-x86_64-linux-gnu.so`
 - metadata
-  - example-0.0.1.dist-info/WHEEL: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/WHEEL`
-  - example-0.0.1.dist-info/METADATA: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/METADATA`
-  - example-0.0.1.dist-info/RECORD: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/RECORD`
-  - example-0.0.1.dist-info/licenses/LICENSE: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/licenses/LICENSE`
+  - `example-0.0.1.dist-info/WHEEL`: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/WHEEL`
+  - `example-0.0.1.dist-info/METADATA`: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/METADATA`
+  - `example-0.0.1.dist-info/RECORD`: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/RECORD`
+  - `example-0.0.1.dist-info/licenses/LICENSE`: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/licenses/LICENSE`
 - attached data
-  - example-0.0.1.data/scripts/example: `/usr/bin/example`
-  - example-0.0.1.data/headers/example.h: `/usr/include/python3.13/example.h`
-  - example-0.0.1.data/other/data.txt: `/usr/other/data.txt`
+  - `example-0.0.1.data/scripts/example`: `/usr/bin/example`
+  - `example-0.0.1.data/headers/example.h`: `/usr/include/python3.13/example.h`
+  - `example-0.0.1.data/other/data.txt`: `/usr/other/data.txt`
 
 So we create a [xmake.lua](src/xmake_python/templates/xmake.lua), which defines
 some variables, and when `xmake install -o/tmp/tmpXXXXXXXX/data`, they will be
