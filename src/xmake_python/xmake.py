@@ -9,7 +9,6 @@ from shlex import split
 @dataclass
 class XMaker:
     xmake: str = "xmake"
-    root: str = "."
     command: str = ""
     tempname: str = ""
     project: str = ""

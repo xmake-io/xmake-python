@@ -104,7 +104,6 @@ class WheelBuilder:
         xmake_path = directory / "xmake.lua"
         if xmake_path.exists() or xmaker != {}:
             xmake = XMaker(xmaker.get("xmake", "xmake"),
-                           xmaker.get("root", "."),
                            xmaker.get("command", ""),
                            xmaker.get("tempname", ""),
                            xmaker.get("project", os.path.abspath(".")))
@@ -119,10 +118,15 @@ class WheelBuilder:
     @property
     def wheel_filename(self):
         dist_name = common.normalize_dist_name(self.metadata.name, self.metadata.version)
+        py_api = ""
+        root_is_purelib = True
         if self.xmake and self.is_build:
-            tag = str(WheelTag.compute_best([]))
-        else:
-            tag = ('py2.' if self.metadata.supports_py2 else '') + 'py3-none-any'
+            root_is_purelib = False
+            with open("xmake.lua") as f:
+                text = f.read()
+            if text.find('add_rules("python') == text.find("add_rules('python") == -1:
+                py_api = ('py2.' if self.metadata.supports_py2 else '') + 'py3'
+        tag = str(WheelTag.compute_best([], py_api, root_is_purelib=root_is_purelib))
         return '{}-{}.whl'.format(dist_name, tag)
 
     def _add_file(self, full_path, rel_path):
