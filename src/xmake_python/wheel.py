@@ -14,6 +14,7 @@ from pathlib import Path
 from types import SimpleNamespace
 import zipfile
 from pathlib import Path
+from subprocess import run
 
 from . import common
 from .__main__ import __version__
@@ -89,7 +90,7 @@ class WheelBuilder:
         if xmake:
             xmake.tempname = self.temp.name
         self.xmake = xmake
-        self.is_build = False
+        self.kind = 0
 
     @classmethod
     def from_ini_path(cls, ini_path, target_fp):
@@ -120,12 +121,10 @@ class WheelBuilder:
         dist_name = common.normalize_dist_name(self.metadata.name, self.metadata.version)
         py_api = ""
         root_is_purelib = True
-        if self.xmake and self.is_build:
+        if self.kind != 0:
             root_is_purelib = False
-            with open("xmake.lua") as f:
-                text = f.read()
-            if text.find('add_rules("python') == text.find("add_rules('python") == -1:
-                py_api = ('py2.' if self.metadata.supports_py2 else '') + 'py3'
+        if self.kind == 1:
+            py_api = ('py2.' if self.metadata.supports_py2 else '') + 'py3'
         tag = str(WheelTag.compute_best([], py_api, root_is_purelib=root_is_purelib))
         return '{}-{}.whl'.format(dist_name, tag)
 
@@ -264,8 +263,7 @@ class WheelBuilder:
                 self.xmake.config()
                 self.xmake.build()
                 self.xmake.install()
-                if os.path.isdir("build"):
-                    self.is_build = True
+                self.kind = self.xmake.show()
             try:
                 if editable:
                     self.add_pth()

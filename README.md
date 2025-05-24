@@ -52,9 +52,6 @@ should be as fast as ninja, as easy as meson, as powerful as cmake.
 ## TODO
 
 - [ ] get project version from `xmake.lua`
-- [ ] know wheel tag by rules <https://github.com/xmake-io/xmake/discussions/6499>.
-  Currently, we find `add_rules(['"]python\.` in `xmake.lua`, which is not
-  precious.
 
 ## Usage
 
