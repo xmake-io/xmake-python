@@ -19,7 +19,7 @@ class XMaker:
         # src/xmake_python/templates/xmake.lua
         with open(Path(__file__).parent / "templates" / "xmake.lua") as f:
             text = f.read()
-        text = text.format(project=self.project, root=self.tempname.replace("\\", "\\\\"), version=self.version)
+        text = text.format(project=self.project.replace("\\", "\\\\"), root=self.tempname.replace("\\", "\\\\"), version=self.version)
         with open(Path(self.tempname) / "xmake.lua", "w") as f:
             f.write(text)
         cmd = [
