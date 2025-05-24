@@ -33,7 +33,6 @@ class XMaker:
 
     def build(self):
         cmd = [self.xmake, "-y", "-P", self.tempname, "--verbose"]
-        breakpoint()
         run(cmd)
 
     def install(self):
