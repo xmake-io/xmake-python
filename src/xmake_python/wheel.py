@@ -14,10 +14,9 @@ from pathlib import Path
 from types import SimpleNamespace
 import zipfile
 from pathlib import Path
-from subprocess import run
 
 from . import common
-from .__main__ import __version__
+from .templates import __version__
 from .xmake import XMaker
 from .builder.wheel_tag import WheelTag
 
@@ -107,7 +106,8 @@ class WheelBuilder:
             xmake = XMaker(xmaker.get("xmake", "xmake"),
                            xmaker.get("command", ""),
                            xmaker.get("tempname", ""),
-                           xmaker.get("project", os.path.abspath(".")))
+                           xmaker.get("project", os.path.abspath(".")),
+                           ini_info.metadata["version"])
         return cls(
             directory, module, metadata, entrypoints, target_fp, ini_info.data_directory, xmake
         )

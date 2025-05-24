@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 else:
     StrMapping = Mapping
 
-from .__main__ import __version__
+from .templates import __version__
 
 __all__ = [
     "LEVEL_VALUE",

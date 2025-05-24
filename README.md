@@ -49,10 +49,6 @@ should be as fast as ninja, as easy as meson, as powerful as cmake.
   - [xmake-python](https://pypi.org/project/xmake-python/): A python build system
     based on xmake. This project!
 
-## TODO
-
-- [ ] get project version from `xmake.lua`
-
 ## Usage
 
 `pyproject.toml`:

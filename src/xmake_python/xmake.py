@@ -12,13 +12,14 @@ class XMaker:
     command: str = ""
     tempname: str = ""
     project: str = ""
+    version: str = ""
 
     def config(self):
         text = ""
         # src/xmake_python/templates/xmake.lua
         with open(Path(__file__).parent / "templates" / "xmake.lua") as f:
             text = f.read()
-        text = text.format(project=self.project, root=self.tempname)
+        text = text.format(project=self.project, root=self.tempname, version=self.version)
         with open(Path(self.tempname) / "xmake.lua", "w") as f:
             f.write(text)
         cmd = [
@@ -32,6 +33,7 @@ class XMaker:
 
     def build(self):
         cmd = [self.xmake, "-y", "-P", self.tempname, "--verbose"]
+        breakpoint()
         run(cmd)
 
     def install(self):

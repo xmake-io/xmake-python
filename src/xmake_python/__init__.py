@@ -11,7 +11,7 @@ from .common import (
 from .config import read_xmake_config
 from .wheel import make_wheel_in, _write_wheel_file
 from .sdist import SdistBuilder
-from .__main__ import __version__
+from .templates import __version__
 
 log = logging.getLogger(__name__)
 
