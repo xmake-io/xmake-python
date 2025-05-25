@@ -14,6 +14,7 @@ from pathlib import Path
 from types import SimpleNamespace
 import zipfile
 from pathlib import Path
+import sysconfig
 
 from . import common
 from .templates import __version__
@@ -125,7 +126,8 @@ class WheelBuilder:
             root_is_purelib = False
         if self.kind == 1:
             py_api = ('py2.' if self.metadata.supports_py2 else '') + 'py3'
-        tag = str(WheelTag.compute_best([], py_api, root_is_purelib=root_is_purelib))
+        archs = [sysconfig.get_platform().split("-")[-1]]
+        tag = str(WheelTag.compute_best(archs, py_api, root_is_purelib=root_is_purelib))
         return '{}-{}.whl'.format(dist_name, tag)
 
     def _add_file(self, full_path, rel_path):
