@@ -126,7 +126,9 @@ class WheelBuilder:
             root_is_purelib = False
         if self.kind == 1:
             py_api = ('py2.' if self.metadata.supports_py2 else '') + 'py3'
-        archs = [sysconfig.get_platform().split("-")[-1]]
+        archs = []
+        if sysconfig.get_platform().split("-")[-1] == "universal2":
+            archs = ["universal2"]
         tag = str(WheelTag.compute_best(archs, py_api, root_is_purelib=root_is_purelib))
         return '{}-{}.whl'.format(dist_name, tag)
 
