@@ -145,8 +145,3 @@ So you can create 3 kinds packages:
 - dynamic linked python module, which named like
   `example-0.0.1-cp313-cp313-linux_x86_64.whl`, because dynamic linked python
   module links different python library `/usr/lib/libpython3.X.so`
-
-## TODO
-
-- [ ] support cross compilation according to
-  [`ARCHFLAGS`](https://scikit-build-core.readthedocs.io/en/latest/guide/crosscompile.html#intel-to-applesilicon)
