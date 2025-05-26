@@ -48,11 +48,21 @@ class XMaker:
             commands = ["-a", "armv7"]
         elif wheeltag.arch.endswith("i686"):
             commands = ["-a", "i386"]
-        cmd = (
-            [self.xmake, "config", "-y", "-P", self.tempname]
-            + commands
-            + split(self.command)
-        )
+
+        if wheeltag.arch.endswith("universal2"):
+            commands = ["-a", "arm64,x86_64"]
+            cmd = (
+                [self.xmake, "macro", "-y", "-P", self.tempname, "package"]
+                + commands
+                + ["-f"]
+                + split(self.command)
+            )
+        else:
+            cmd = (
+                [self.xmake, "config", "-y", "-P", self.tempname]
+                + commands
+                + split(self.command)
+            )
         self.run(cmd)
 
     def build(self):
