@@ -264,6 +264,7 @@ class WheelBuilder:
     def build(self, editable=False):
         with self.temp:
             if self.xmake:
+                self.xmake.init()
                 self.kind = self.xmake.show()
                 self.xmake.config(self.wheeltag)
                 self.xmake.build()

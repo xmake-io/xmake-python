@@ -16,11 +16,7 @@ class XMaker:
     project: str = ""
     version: str = ""
 
-    def run(self, commands):
-        print(join(commands))
-        run(commands)
-
-    def config(self, wheeltag: WheelTag):
+    def init(self):
         text = ""
         # src/xmake_python/templates/xmake.lua
         with open(Path(__file__).parent / "templates" / "xmake.lua") as f:
@@ -32,6 +28,12 @@ class XMaker:
         )
         with open(Path(self.tempname) / "xmake.lua", "w") as f:
             f.write(text)
+
+    def run(self, commands):
+        print(join(commands))
+        run(commands)
+
+    def config(self, wheeltag: WheelTag):
         commands = []
         if wheeltag.arch == "win32":
             commands = ["-a", "x86"]
@@ -87,7 +89,8 @@ class XMaker:
             "-ltargets",
             "--json",
         ]
-        targets = json.loads(self.check_output(cmd))
+        output = self.check_output(cmd)
+        targets = json.loads(output)
         kinds = []
         for target in targets:
             kind = 0
