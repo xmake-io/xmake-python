@@ -86,7 +86,35 @@ In charge of:
 ### Backends
 
 Refer
-[some python build system backends](https://scikit-build-core.readthedocs.io/en/latest/#other-projects-for-building)
+[some python build system backends](https://scikit-build-core.readthedocs.io/en/latest/#other-projects-for-building).
+
+Many build systems are only used to build pure python wheels, such as
+setuptools, flit-core, poetry, hatchling. And others can build python modules
+written in C/C++/Fortran/Rust/etc. For the latter, scikit-build-core will search
+and install pure python files automatically, without adding any related code to
+`CMakeLists.txt`, meson-python is on the contrast. You must add code to
+`meson.build`:
+
+```meson
+py = import('python').find_installation()
+py.install_sources(
+  [
+    'src/example/__init__.py',
+    'src/example/__main__.py',
+  ],
+  subdir: 'example',
+)
+```
+
+This project is also like meson-python. You must add code to `xmake.lua`:
+
+```lua
+target("example")
+set_kind("phony")
+add_installfiles("src/example/*.py", {prefixdir= "$(xmake-platlib)/example"})
+```
+
+Note, xmake supports glob expression which meson doesn't support.
 
 Backend can install optional build dependencies. For example,
 [scikit-build-core](https://pypi.org/project/scikit-build-core/)
@@ -97,6 +125,14 @@ We provide two python packages. One is a
 [wheel for xmake](https://github.com/xmake-io/xmake-wheel/), like cmake and
 ninja. Another is a python build system backend, which will install xmake wheel
 when xmake is not found in `$PATH`.
+
+Note xmake works needs `git`. Superisely, even if you
+`echo 'echo 1' > /usr/bin/git && chmod +x /usr/bin/git`, xmake still can work
+until it actually call git. And if you `add_package()` in your `xmake.lua`,
+which download tools (curl, wget, ...) and extractors (tar, 7z or gzip, ...) are
+all needed. Enough lucky, xmake will build git, 7zip, ... if needed. However, in
+qemu and docker, the build will be very slow, So git had better be packaged to
+PYPI, or expect users to install these tools by themselves.
 
 ### Wheel
 
@@ -134,7 +170,7 @@ some paths prefixed with `/tmp/tmpXXXXXXXX`, and finally packaged to:
   `example-0.0.1.dist-info/`
 - xmake-null: `/null` -> `/tmp/tmpXXXXXXXX/null` -> will not be packaged
 
-So you can create 3 kinds packages:
+So you can create 3 kinds of wheels:
 
 - pure python wheel, which named like `example-0.0.1-py3-none-any.whl`,
   support any platforms and python 3 version.
@@ -144,4 +180,31 @@ So you can create 3 kinds packages:
   dynamically linked libraries.
 - dynamic linked python module, which named like
   `example-0.0.1-cp313-cp313-linux_x86_64.whl`, because dynamic linked python
-  module links different python library `/usr/lib/libpython3.X.so`
+  module links different python library like `/usr/lib/libpython3.13.so`.
+
+We use the following method to judge the kind:
+
+1. If all target's kinds are `phony` and don't use any package, the wheel
+   is a pure python wheel.
+2. Else if all targets don't use rule `python.*`, the wheel is a binary program wheel.
+3. Else the wheel is a dynamic linked python module wheel.
+
+### Cross Compilation
+
+python project usually uses [cibuildwheel](https://github.com/pypa/cibuildwheel)
+to build wheels for all platforms. Github workflow has 3 types of machines.
+
+- Ubuntu on amd64, used to build wheels for manylinux and musllinux
+- macOS on arm64
+- Windows on amd64
+
+For manylinux (A GNU/Linux distribution forked from CentOS) and musllinux (A
+musl/linux distribution forked from Alpine), it uses qemu to emulate different
+CPUs and use docker to start the OS. For macOS and Windows, it use cross
+compiler to build wheels for macOS on amd64 and Windows on arm64, etc. These
+toolchains respect many environment variables:
+
+- `ARCHFLAGS`: `-a XXX`. Specially, `-a arm64 -a x86_64` is for universal2.
+- `VSCMD_ARG_TARGET_ARCH`: for Visual Studio's MSVC.
+
+This project also detect them.
