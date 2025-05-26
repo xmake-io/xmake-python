@@ -268,8 +268,7 @@ class WheelBuilder:
             if self.xmake:
                 self.xmake.init()
                 self.kind = self.xmake.show()
-                self.xmake.config(self.wheeltag)
-                self.xmake.build()
+                self.xmake.package(self.wheeltag)
                 self.xmake.install()
             try:
                 if editable:

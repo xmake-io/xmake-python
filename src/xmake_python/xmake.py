@@ -33,7 +33,7 @@ class XMaker:
         print(join(commands))
         run(commands, cwd=self.tempname)
 
-    def config(self, wheeltag: WheelTag):
+    def package(self, wheeltag: WheelTag):
         commands = []
         if wheeltag.arch == "win32":
             commands = ["-a", "x86"]
@@ -58,10 +58,8 @@ class XMaker:
             )
         else:
             cmd = [self.xmake, "config", "-y"] + commands + split(self.command)
-        self.run(cmd)
-
-    def build(self):
-        cmd = [self.xmake, "-y", "--verbose"]
+            self.run(cmd)
+            cmd = [self.xmake, "-y", "--verbose"]
         self.run(cmd)
 
     def install(self):
