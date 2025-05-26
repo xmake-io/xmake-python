@@ -84,11 +84,3 @@ exclude_lines = [
   "if __name__ == .__main__.:",
   "\\s*import tomli as tomllib",
 ]
-
-[tool.cibuildwheel]
-archs = ["all"]
-# https://github.com/astral-sh/uv/issues/10260
-skip = "*37-* *38-* *39-* *-musllinux_s390x *-musllinux_ppc64*"
-build-frontend = "build[uv]"
-before-test = "pip install .[dev]"
-test-command = "pytest {project}"

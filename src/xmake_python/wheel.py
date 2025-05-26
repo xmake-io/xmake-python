@@ -14,12 +14,12 @@ from pathlib import Path
 from types import SimpleNamespace
 import zipfile
 from pathlib import Path
-import sysconfig
 
 from . import common
 from .templates import __version__
 from .xmake import XMaker
 from .builder.wheel_tag import WheelTag
+from .builder.builder import get_archs, archs_to_tags
 
 log = logging.getLogger(__name__)
 
@@ -91,6 +91,7 @@ class WheelBuilder:
             xmake.tempname = self.temp.name
         self.xmake = xmake
         self.kind = 0
+        self.wheeltag = None
 
     @classmethod
     def from_ini_path(cls, ini_path, target_fp):
@@ -126,10 +127,9 @@ class WheelBuilder:
             root_is_purelib = False
         if self.kind == 1:
             py_api = ('py2.' if self.metadata.supports_py2 else '') + 'py3'
-        archs = []
-        if sysconfig.get_platform().split("-")[-1] == "universal2":
-            archs = ["universal2"]
-        tag = str(WheelTag.compute_best(archs, py_api, root_is_purelib=root_is_purelib))
+        archs = archs_to_tags(get_archs(os.environ))
+        self.wheeltag = WheelTag.compute_best(archs, py_api, root_is_purelib=root_is_purelib)
+        tag = str(self.wheeltag)
         return '{}-{}.whl'.format(dist_name, tag)
 
     def _add_file(self, full_path, rel_path):
@@ -264,10 +264,10 @@ class WheelBuilder:
     def build(self, editable=False):
         with self.temp:
             if self.xmake:
-                self.xmake.config()
+                self.kind = self.xmake.show()
+                self.xmake.config(self.wheeltag)
                 self.xmake.build()
                 self.xmake.install()
-                self.kind = self.xmake.show()
             try:
                 if editable:
                     self.add_pth()
