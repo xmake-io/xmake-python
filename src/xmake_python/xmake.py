@@ -29,7 +29,8 @@ class XMaker:
         with open(Path(self.tempname) / "xmake.lua", "w") as f:
             f.write(text)
 
-    def run(self, commands):
+    @staticmethod
+    def run(commands):
         print(join(commands))
         run(commands)
 
