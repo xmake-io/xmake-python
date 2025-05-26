@@ -29,10 +29,9 @@ class XMaker:
         with open(Path(self.tempname) / "xmake.lua", "w") as f:
             f.write(text)
 
-    @staticmethod
-    def run(commands):
+    def run(self, commands):
         print(join(commands))
-        run(commands)
+        run(commands, cwd=self.tempname)
 
     def config(self, wheeltag: WheelTag):
         commands = []
@@ -52,60 +51,39 @@ class XMaker:
         if wheeltag.arch.endswith("universal2"):
             commands = ["-a", "arm64,x86_64"]
             cmd = (
-                [self.xmake, "macro", "-y", "-P", self.tempname, "package"]
+                [self.xmake, "macro", "-y", "package"]
                 + commands
                 + ["-f"]
                 + split(self.command)
             )
         else:
-            cmd = (
-                [self.xmake, "config", "-y", "-P", self.tempname]
-                + commands
-                + split(self.command)
-            )
+            cmd = [self.xmake, "config", "-y"] + commands + split(self.command)
         self.run(cmd)
 
     def build(self):
-        cmd = [self.xmake, "-y", "-P", self.tempname, "--verbose"]
+        cmd = [self.xmake, "-y", "--verbose"]
         self.run(cmd)
 
     def install(self):
-        cmd = [
-            self.xmake,
-            "install",
-            "-y",
-            "-P",
-            self.tempname,
-            "-o",
-            self.tempname,
-        ]
+        cmd = [self.xmake, "install", "-y", "-o", self.tempname]
         self.run(cmd)
 
-    @staticmethod
-    def check_output(cmd: list[str]):
+    def check_output(self, cmd: list[str]):
         b = b""
         try:
-            b = check_output(cmd)
+            b = check_output(cmd, cwd=self.tempname)
         except CalledProcessError as e:
             b: bytes = e.stdout
         return b.decode()
 
     def show(self):
-        cmd = [
-            self.xmake,
-            "show",
-            "-y",
-            "-P",
-            self.tempname,
-            "-ltargets",
-            "--json",
-        ]
+        cmd = [self.xmake, "show", "-y", "-ltargets", "--json"]
         output = self.check_output(cmd)
         targets = json.loads(output)
         kinds = []
         for target in targets:
             kind = 0
-            cmd = [self.xmake, "show", "-y", "-P", self.tempname, "-t", target]
+            cmd = [self.xmake, "show", "-y", "-t", target]
             text = self.check_output(cmd)
             if text.find("phony") == -1 or text.find("packages") != -1:
                 kind = 1
