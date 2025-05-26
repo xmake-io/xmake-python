@@ -51,19 +51,19 @@ class XMaker:
         if wheeltag.arch.endswith("universal2"):
             commands = ["-a", "arm64,x86_64"]
             cmd = (
-                [self.xmake, "macro", "-y", "package"]
+                [self.xmake, "macro", "-y", "-P", ".", "package"]
                 + commands
                 + ["-f"]
                 + split(self.command)
             )
         else:
-            cmd = [self.xmake, "config", "-y"] + commands + split(self.command)
+            cmd = [self.xmake, "config", "-y", "-P", "."] + commands + split(self.command)
             self.run(cmd)
-            cmd = [self.xmake, "-y", "--verbose"]
+            cmd = [self.xmake, "-y", "-P", ".", "--verbose"]
         self.run(cmd)
 
     def install(self):
-        cmd = [self.xmake, "install", "-y", "-o", self.tempname]
+        cmd = [self.xmake, "install", "-y", "-P", ".", "-o", self.tempname]
         self.run(cmd)
 
     def check_output(self, cmd: list[str]):
@@ -75,13 +75,13 @@ class XMaker:
         return b.decode()
 
     def show(self):
-        cmd = [self.xmake, "show", "-y", "-ltargets", "--json"]
+        cmd = [self.xmake, "show", "-y", "-P", ".", "-ltargets", "--json"]
         output = self.check_output(cmd)
         targets = json.loads(output)
         kinds = []
         for target in targets:
             kind = 0
-            cmd = [self.xmake, "show", "-y", "-t", target]
+            cmd = [self.xmake, "show", "-y", "-P", ".", "-t", target]
             text = self.check_output(cmd)
             if text.find("phony") == -1 or text.find("packages") != -1:
                 kind = 1
