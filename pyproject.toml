@@ -6,7 +6,7 @@ build-backend = "xmake_python"
 # https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
 [project]
 name = "xmake-python"
-version = "0.0.11"
+version = "0.0.12"
 description = "xmake Python build system (PEP 517)"
 readme = "README.md"
 # from typing import Self
