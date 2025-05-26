@@ -91,7 +91,6 @@ class WheelBuilder:
             xmake.tempname = self.temp.name
         self.xmake = xmake
         self.kind = 0
-        self.wheeltag = None
 
     @classmethod
     def from_ini_path(cls, ini_path, target_fp):
@@ -119,8 +118,7 @@ class WheelBuilder:
         return common.dist_info_name(self.metadata.name, self.metadata.version)
 
     @property
-    def wheel_filename(self):
-        dist_name = common.normalize_dist_name(self.metadata.name, self.metadata.version)
+    def wheeltag(self):
         py_api = ""
         root_is_purelib = True
         if self.kind != 0:
@@ -128,7 +126,11 @@ class WheelBuilder:
         if self.kind == 1:
             py_api = ('py2.' if self.metadata.supports_py2 else '') + 'py3'
         archs = archs_to_tags(get_archs(os.environ))
-        self.wheeltag = WheelTag.compute_best(archs, py_api, root_is_purelib=root_is_purelib)
+        return WheelTag.compute_best(archs, py_api, root_is_purelib=root_is_purelib)
+
+    @property
+    def wheel_filename(self):
+        dist_name = common.normalize_dist_name(self.metadata.name, self.metadata.version)
         tag = str(self.wheeltag)
         return '{}-{}.whl'.format(dist_name, tag)
 
