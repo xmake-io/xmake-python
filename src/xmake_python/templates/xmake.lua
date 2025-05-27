@@ -30,6 +30,10 @@ option("xmake-version")
 do
     set_default("{version}")
 end
+option("xmake-prefix")
+do
+    set_default("/data")
+end
 option_end()
 set_prefixdir("/data", {{bindir = "bin", libdir = "lib", includedir = "include"}})
 includes("{project}")

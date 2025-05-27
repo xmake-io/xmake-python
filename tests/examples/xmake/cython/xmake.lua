@@ -47,9 +47,16 @@ end
 
 target("c")
 do
-    set_prefixdir("/", {libdir = "$(xmake-platlib)/example"})
+    add_deps("phony")
+    -- we set_prefixdir() after phony's target:install()
+    set_prefixdir("$(xmake-prefix)", {libdir = "$(xmake-platlib)/example"})
     add_rules("python.library", "python.cython", { soabi = true })
     add_files("*.py")
     add_packages("python")
-    add_installfiles("src/example/*.py", {prefixdir= "$(xmake-platlib)/example"})
+end
+
+target("phony")
+do
+    set_kind("phony")
+    add_installfiles("src/(example/*.py)", {prefixdir= "$(xmake-platlib)"})
 end
