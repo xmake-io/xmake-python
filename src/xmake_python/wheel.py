@@ -26,11 +26,11 @@ log = logging.getLogger(__name__)
 wheel_file_template = """\
 Wheel-Version: 1.0
 Generator: xmake {version}
-Root-Is-Purelib: true
+Root-Is-Purelib: %s
 """.format(version=__version__)
 
-def _write_wheel_file(f, tag):
-    f.write(wheel_file_template)
+def _write_wheel_file(f, tag, root_is_purelib):
+    f.write(wheel_file_template % ('true' if root_is_purelib else 'false'))
     f.write(f"Tag: {tag}\n")
 
 
@@ -116,15 +116,19 @@ class WheelBuilder:
         return common.dist_info_name(self.metadata.name, self.metadata.version)
 
     @property
-    def wheeltag(self):
-        py_api = ""
+    def root_is_purelib(self):
         root_is_purelib = True
         if self.kind != 0:
             root_is_purelib = False
+        return root_is_purelib
+
+    @property
+    def wheeltag(self):
+        py_api = ""
         if self.kind == 1:
             py_api = ('py2.' if self.metadata.supports_py2 else '') + 'py3'
         archs = archs_to_tags(get_archs(os.environ))
-        return WheelTag.compute_best(archs, py_api, root_is_purelib=root_is_purelib)
+        return WheelTag.compute_best(archs, py_api, root_is_purelib=self.root_is_purelib)
 
     @property
     def wheel_filename(self):
@@ -247,7 +251,7 @@ class WheelBuilder:
             self._add_file(full_path, '%s/%s' % (self.dist_info, rel_path))
 
         with self._write_to_zip(self.dist_info + '/WHEEL') as f:
-            _write_wheel_file(f, self.wheeltag)
+            _write_wheel_file(f, self.wheeltag, self.root_is_purelib)
 
         with self._write_to_zip(self.dist_info + '/METADATA') as f:
             self.metadata.write_metadata_file(f)
