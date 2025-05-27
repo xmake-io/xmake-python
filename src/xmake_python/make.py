@@ -72,4 +72,10 @@ class Maker:
         return b.decode()
 
     def show(self):
-        return 0
+        with open(self.makefile) as f:
+            text = f.read()
+        if text.find(".c") == -1:
+            return 0
+        if text.find("pkg-config --cflags python") == -1:
+            return 1
+        return 2

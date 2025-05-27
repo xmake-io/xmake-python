@@ -1,8 +1,10 @@
-MAKE_PLATLIB := {root}/platlib
-MAKE_SCRIPTS := {root}/data/bin
-MAKE_HEADERS := {root}/data/include
-MAKE_DATA := {root}/data
-MAKE_METADATA := {root}/metadata
-MAKE_NULL := {root}/null
-DESTDIR := {root}/data
+XMAKE_ROOT := {root}
+XMAKE_PLATLIB := $(XMAKE_ROOT)/platlib
+XMAKE_SCRIPTS := $(XMAKE_ROOT)/data/bin
+XMAKE_HEADERS := $(XMAKE_ROOT)/data/include
+XMAKE_DATA := $(XMAKE_ROOT)/data
+XMAKE_METADATA := $(XMAKE_ROOT)/metadata
+XMAKE_NULL := $(XMAKE_ROOT)/null
+XMAKE_VERSION := {version}
+DESTDIR := $(XMAKE_DATA)
 include {project}/{makefile}

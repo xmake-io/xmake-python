@@ -1,0 +1,9 @@
+[build-system]
+requires = ["xmake-python", "cython"]
+build-backend = "xmake_python"
+
+[project]
+name = "example"
+description = "example with cython"
+version = "0.0.1"
+readme = "README.md"
