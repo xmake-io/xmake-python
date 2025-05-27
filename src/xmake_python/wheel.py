@@ -18,6 +18,7 @@ from pathlib import Path
 from . import common
 from .templates import __version__
 from .xmake import XMaker
+from .make import Maker
 from .builder.wheel_tag import WheelTag
 from .builder.builder import get_archs, archs_to_tags
 
@@ -101,12 +102,23 @@ class WheelBuilder:
         xmake = None
         xmaker = ini_info.dtool.get("xmaker", {})
         xmake_path = directory / "xmake.lua"
+        maker = ini_info.dtool.get("maker", {})
+        configure_path = directory / "configure"
+        make_path = directory / maker.get("makefile", "Makefile")
         if xmake_path.exists() or xmaker != {}:
             xmake = XMaker(xmaker.get("xmake", "xmake"),
                            xmaker.get("command", ""),
                            xmaker.get("tempname", ""),
                            xmaker.get("project", os.path.abspath(".")),
                            ini_info.metadata["version"])
+        elif configure_path.exists() or make_path.exists() or maker != {}:
+            xmake = Maker(maker.get("make", "make"),
+                           maker.get("command", ""),
+                           maker.get("tempname", ""),
+                           maker.get("project", os.path.abspath(".")),
+                           ini_info.metadata["version"],
+                           maker.get("makefile", "Makefile"),
+                          )
         return cls(
             directory, module, metadata, entrypoints, target_fp, ini_info.data_directory, xmake
         )

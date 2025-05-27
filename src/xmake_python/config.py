@@ -130,7 +130,7 @@ def prep_toml_config(d, path):
         )
 
     unknown_sections = set(dtool) - {
-        'metadata', 'module', 'scripts', 'entrypoints', 'sdist', 'external-data', 'xmaker'
+        'metadata', 'module', 'scripts', 'entrypoints', 'sdist', 'external-data', 'xmaker', 'maker'
     }
     unknown_sections = [s for s in unknown_sections if not s.lower().startswith('x-')]
     if unknown_sections:
