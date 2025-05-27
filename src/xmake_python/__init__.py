@@ -50,7 +50,7 @@ def prepare_metadata_for_build_wheel(metadata_directory, config_settings=None):
     os.mkdir(dist_info)
 
     with open(osp.join(dist_info, 'WHEEL'), 'w', encoding='utf-8') as f:
-        _write_wheel_file(f, supports_py2=metadata.supports_py2)
+        _write_wheel_file(f)
 
     with open(osp.join(dist_info, 'METADATA'), 'w', encoding='utf-8') as f:
         metadata.write_metadata_file(f)

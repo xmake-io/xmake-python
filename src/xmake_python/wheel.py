@@ -30,7 +30,7 @@ Generator: xmake {version}
 Root-Is-Purelib: %s
 """.format(version=__version__)
 
-def _write_wheel_file(f, tag, root_is_purelib):
+def _write_wheel_file(f, tag="py3-none-any", root_is_purelib=True):
     f.write(wheel_file_template % ('true' if root_is_purelib else 'false'))
     f.write(f"Tag: {tag}\n")
 
