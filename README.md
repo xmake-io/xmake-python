@@ -168,17 +168,17 @@ some variables, and when `xmake install -o/tmp/tmpXXXXXXXX`, they will be
 some paths prefixed with `/tmp/tmpXXXXXXXX`, and finally packaged to:
 
 - pythondir: `/platlib` -> `/tmp/tmpXXXXXXXX/platlib` -> `/`, like
-  scikit-build-core's `SKBUILD_PLATLIB`
+  scikit-build-core's `SKBUILD_PLATLIB_DIR`
 - bindir: `/data/bin` -> `/tmp/tmpXXXXXXXX/data/bin` ->
-  `example-0.0.1.data/scripts/`, like scikit-build-core's `SKBUILD_SCRIPTS`
+  `example-0.0.1.data/scripts/`, like scikit-build-core's `SKBUILD_SCRIPTS_DIR`
 - includedir: `/data/include` -> `/tmp/tmpXXXXXXXX/data/include` ->
-  `example-0.0.1.data/headers/`, like scikit-build-core's `SKBUILD_HEADERS`
+  `example-0.0.1.data/headers/`, like scikit-build-core's `SKBUILD_HEADERS_DIR`
 - prefix: `/data` -> `/tmp/tmpXXXXXXXX/data` ->
-  `example-0.0.1.data/data/`, like scikit-build-core's `SKBUILD_DATA`
+  `example-0.0.1.data/data/`, like scikit-build-core's `SKBUILD_DATA_DIR`
 - metadatadir: `/metadata` -> `/tmp/tmpXXXXXXXX/metadata` ->
-  `example-0.0.1.dist-info/`, like scikit-build-core's `SKBUILD_METADATA`
+  `example-0.0.1.dist-info/`, like scikit-build-core's `SKBUILD_METADATA_DIR`
 - nulldir: `/null` -> `/tmp/tmpXXXXXXXX/null` -> will not be packaged, like
-  scikit-build-core's `SKBUILD_NULL`
+  scikit-build-core's `SKBUILD_NULL_DIR`
 
 So you can create 3 kinds of wheels:
 
