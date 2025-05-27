@@ -3,7 +3,7 @@
 #include <sys/cdefs.h>
 __BEGIN_DECLS
 
-#define TEST "Hello, world!"
+#define VERSION "${version}"
 
 __END_DECLS
 #endif /* main.h */

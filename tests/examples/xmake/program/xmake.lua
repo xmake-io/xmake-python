@@ -6,11 +6,15 @@ do
     add_files("*.c")
 
     add_installfiles("main.py", { prefixdir = "$(xmake-scripts)" })
-    add_installfiles("*.h", { prefixdir = "$(xmake-headers)" })
     -- by default, prefixdir is $(xmake-data)
     -- so it can be ignored except you call set_prefixdir()
     add_installfiles("README.md", { prefixdir = "share/doc" })
     add_installfiles("example.py", { prefixdir = "$(xmake-platlib)" })
     add_installfiles("pyproject.toml", { prefixdir = "$(xmake-metadata)" })
     add_installfiles("xmake.lua", { prefixdir = "$(xmake-null)" })
+
+    set_configvar("version", "$(xmake-version)")
+    add_configfiles("main.h.in")
+    add_includedirs("$(buildir)")
+    add_installfiles("$(buildir)/main.h", { prefixdir = "$(xmake-headers)" })
 end

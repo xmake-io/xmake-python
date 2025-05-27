@@ -1,7 +1,8 @@
 .PHONY: build install
 build: main
-
-main: main.c
+main: main.c main.h
+main.h:
+	echo '#define VERSION "$(XMAKE_VERSION)"' > $@
 
 install:
 	install -D main -t $(XMAKE_SCRIPTS)
