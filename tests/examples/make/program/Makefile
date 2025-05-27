@@ -5,10 +5,10 @@ main.h:
 	echo '#define VERSION "$(XMAKE_VERSION)"' > $@
 
 install:
-	install -D main -t $(XMAKE_SCRIPTS)
-	install -D main.py -t $(XMAKE_SCRIPTS)
-	install -Dm644 main.h -t $(XMAKE_HEADERS)
-	install -Dm644 README.md -t $(XMAKE_DATA)/share/doc
-	install -Dm644 example.py -t $(XMAKE_PLATLIB)
-	install -Dm644 pyproject.toml -t $(XMAKE_METADATA)
-	install -Dm644 Makefile -t $(XMAKE_NULL)
+	install -D main -t $(bindir)
+	install -D main.py -t $(bindir)
+	install -Dm644 main.h -t $(includedir)
+	install -Dm644 README.md -t $(prefix)/share/doc
+	install -Dm644 example.py -t $(pythondir)
+	install -Dm644 pyproject.toml -t $(metadatadir)
+	install -Dm644 Makefile -t $(nulldir)

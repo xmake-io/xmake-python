@@ -111,7 +111,7 @@ This project is also like meson-python. You must add code to `xmake.lua`:
 ```lua
 target("example")
 set_kind("phony")
-add_installfiles("src/example/*.py", {prefixdir= "$(xmake-platlib)/example"})
+add_installfiles("src/example/*.py", {prefixdir= "$(pythondir)/example"})
 ```
 
 Note, xmake supports glob expression which meson doesn't support.
@@ -142,33 +142,43 @@ optionally contains these files, and they will be installed to:
 
 - python module, can be pure python files or dynamic linked library
   - `example.py`: `/usr/lib/python3.13/site-packages/example.py`
-  - `example/__init__.py`: `/usr/lib/python3.13/site-packages/example/__init__.py`
-  - `example.cpython-313-x86_64-linux-gnu.so`: `/usr/lib/python3.13/site-packages/example.cpython-313-x86_64-linux-gnu.so`
-  - `example/_C.cpython-313-x86_64-linux-gnu.so`: `/usr/lib/python3.13/site-packages/example/_C.cpython-313-x86_64-linux-gnu.so`
+  - `example/__init__.py`:
+    `/usr/lib/python3.13/site-packages/example/__init__.py`
+  - `example.cpython-313-x86_64-linux-gnu.so`:
+    `/usr/lib/python3.13/site-packages/example.cpython-313-x86_64-linux-gnu.so`
+  - `example/_C.cpython-313-x86_64-linux-gnu.so`:
+    `/usr/lib/python3.13/site-packages/example/_C.cpython-313-x86_64-linux-gnu.so`
 - attached data
   - `example-0.0.1.data/scripts/example`: `/usr/bin/example`
-  - `example-0.0.1.data/headers/example.h`: `/usr/include/python3.13/example/example.h`
+  - `example-0.0.1.data/headers/example.h`:
+    `/usr/include/python3.13/example/example.h`
   - `example-0.0.1.data/data/other/data.txt`: `/usr/other/data.txt`
 - metadata
-  - `example-0.0.1.dist-info/WHEEL`: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/WHEEL`
-  - `example-0.0.1.dist-info/METADATA`: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/METADATA`
-  - `example-0.0.1.dist-info/RECORD`: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/RECORD`
-  - `example-0.0.1.dist-info/licenses/LICENSE`: `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/licenses/LICENSE`
+  - `example-0.0.1.dist-info/WHEEL`:
+    `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/WHEEL`
+  - `example-0.0.1.dist-info/METADATA`:
+    `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/METADATA`
+  - `example-0.0.1.dist-info/RECORD`:
+    `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/RECORD`
+  - `example-0.0.1.dist-info/licenses/LICENSE`:
+    `/usr/lib/python3.13/site-packages/example-0.0.1.dist-info/licenses/LICENSE`
 
 So we create a [xmake.lua](src/xmake_python/templates/xmake.lua), which defines
 some variables, and when `xmake install -o/tmp/tmpXXXXXXXX`, they will be
 some paths prefixed with `/tmp/tmpXXXXXXXX`, and finally packaged to:
 
-- xmake-platlib: `/platlib` -> `/tmp/tmpXXXXXXXX/platlib` -> `/`
-- xmake-scripts: `/data/bin` -> `/tmp/tmpXXXXXXXX/data/bin` ->
-  `example-0.0.1.data/scripts/`
-- xmake-headers: `/data/include` -> `/tmp/tmpXXXXXXXX/data/include` ->
-  `example-0.0.1.data/headers/`
-- xmake-data: `/data` -> `/tmp/tmpXXXXXXXX/data` ->
-  `example-0.0.1.data/data/`
-- xmake-metadata: `/metadata` -> `/tmp/tmpXXXXXXXX/metadata` ->
-  `example-0.0.1.dist-info/`
-- xmake-null: `/null` -> `/tmp/tmpXXXXXXXX/null` -> will not be packaged
+- pythondir: `/platlib` -> `/tmp/tmpXXXXXXXX/platlib` -> `/`, like
+  scikit-build-core's `SKBUILD_PLATLIB`
+- bindir: `/data/bin` -> `/tmp/tmpXXXXXXXX/data/bin` ->
+  `example-0.0.1.data/scripts/`, like scikit-build-core's `SKBUILD_SCRIPTS`
+- includedir: `/data/include` -> `/tmp/tmpXXXXXXXX/data/include` ->
+  `example-0.0.1.data/headers/`, like scikit-build-core's `SKBUILD_HEADERS`
+- prefix: `/data` -> `/tmp/tmpXXXXXXXX/data` ->
+  `example-0.0.1.data/data/`, like scikit-build-core's `SKBUILD_DATA`
+- metadatadir: `/metadata` -> `/tmp/tmpXXXXXXXX/metadata` ->
+  `example-0.0.1.dist-info/`, like scikit-build-core's `SKBUILD_METADATA`
+- nulldir: `/null` -> `/tmp/tmpXXXXXXXX/null` -> will not be packaged, like
+  scikit-build-core's `SKBUILD_NULL`
 
 So you can create 3 kinds of wheels:
 
@@ -186,7 +196,8 @@ We use the following method to judge the kind:
 
 1. If all target's kinds are `phony` and don't use any package, the wheel
    is a pure python wheel.
-2. Else if all targets don't use rule `python.*`, the wheel is a binary program wheel.
+2. Else if all targets don't use rule `python.*`, the wheel is a binary program
+   wheel.
 3. Else the wheel is a dynamic linked python module wheel.
 
 ### Cross Compilation
@@ -208,3 +219,35 @@ toolchains respect many environment variables:
 - `VSCMD_ARG_TARGET_ARCH`: for Visual Studio's MSVC.
 
 This project also detect them.
+
+### Variables
+
+All variables suffixed `dir` are kept, like autotools. Except above mentioned
+`bindir`, `includedir`, `pythondir`, etc, the following variables are kept.
+
+- version: xmake version
+- prefixdir: string `data`, used to combine `prefix`: `/tmp/tmpXXXXXXXXX/data`
+- root: temporary working directory like `/tmp/tmpXXXXXXXXX`
+- datadir: `$(prefix)/share`, because it is usual.
+
+### Autotools/Makefile
+
+Except xmake, we also support classic GNU/Linux software build procedures:
+
+```sh
+autoreconf -vif
+./configure
+make
+make install
+```
+
+The following build systems respect it:
+
+- [make](https://www.gnu.org/software/make/)/
+  [kati](https://github.com/google/kati/)
+- [xmake.sh](https://github.com/xmake-io/xmake.sh/)
+- [autotools](https://www.gnu.org/software/autoconf/)
+
+For autotools, you must include
+[`variables.mak`](tests/examples/autotools/program/variables.mak) in your
+`Makefile.am`.

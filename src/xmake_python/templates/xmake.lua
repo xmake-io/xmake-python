@@ -1,38 +1,43 @@
-option("xmake-platlib")
-do
-    set_default("../platlib")
-end
-option("xmake-scripts")
-do
-    set_default("../data/bin")
-end
-option("xmake-headers")
-do
-    set_default("../data/include")
-end
-option("xmake-data")
-do
-    set_default("../data")
-end
-option("xmake-metadata")
-do
-    set_default("../metadata")
-end
-option("xmake-null")
-do
-    set_default("../null")
-end
-option("xmake-root")
-do
-    set_default("{root}")
-end
-option("xmake-version")
+option("version")
 do
     set_default("{version}")
 end
-option("xmake-prefix")
+option("prefixdir")
 do
     set_default("data")
+end
+option("root")
+do
+    set_default("{root}")
+end
+
+option("pythondir")
+do
+    set_default("../platlib")
+end
+option("bindir")
+do
+    set_default("../data/bin")
+end
+option("includedir")
+do
+    set_default("../data/include")
+end
+option("prefix")
+do
+    set_default("../data")
+end
+option("metadatadir")
+do
+    set_default("../metadata")
+end
+option("nulldir")
+do
+    set_default("../null")
+end
+option("datadir")
+do
+    set_default("../data/share")
 end
 option_end()
 set_prefixdir("data", {{bindir = "bin", libdir = "lib", includedir = "include"}})
