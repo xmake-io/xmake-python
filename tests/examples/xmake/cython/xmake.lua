@@ -47,16 +47,13 @@ end
 
 target("c")
 do
-    add_deps("phony")
-    -- we set_prefixdir() after phony's target:install()
-    set_prefixdir("$(xmake-prefix)", {libdir = "$(xmake-platlib)/example"})
+    set_prefixdir("$(xmake-prefix)/$(xmake-platlib)", {libdir = "example"})
     add_rules("python.library", "python.cython", { soabi = true })
     add_files("*.py")
     add_packages("python")
-end
 
-target("phony")
-do
-    set_kind("phony")
-    add_installfiles("src/(example/*.py)", {prefixdir= "$(xmake-platlib)"})
+    add_installfiles("src/(example/*.py)")
+    add_installfiles("README.md", {prefixdir= "$(xmake-data)/share/doc"})
+    add_installfiles("pyproject.toml", {prefixdir= "$(xmake-metadata)"})
+    add_installfiles("xmake.lua", {prefixdir= "$(xmake-null)"})
 end

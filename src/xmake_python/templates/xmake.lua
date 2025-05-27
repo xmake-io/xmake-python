@@ -1,26 +1,26 @@
 option("xmake-platlib")
 do
-    set_default("/../platlib")
+    set_default("../platlib")
 end
 option("xmake-scripts")
 do
-    set_default("/bin")
+    set_default("../data/bin")
 end
 option("xmake-headers")
 do
-    set_default("/include")
+    set_default("../data/include")
 end
 option("xmake-data")
 do
-    set_default("/")
+    set_default("../data")
 end
 option("xmake-metadata")
 do
-    set_default("/../metadata")
+    set_default("../metadata")
 end
 option("xmake-null")
 do
-    set_default("/../null")
+    set_default("../null")
 end
 option("xmake-root")
 do
@@ -32,8 +32,8 @@ do
 end
 option("xmake-prefix")
 do
-    set_default("/data")
+    set_default("data")
 end
 option_end()
-set_prefixdir("/data", {{bindir = "bin", libdir = "lib", includedir = "include"}})
+set_prefixdir("data", {{bindir = "bin", libdir = "lib", includedir = "include"}})
 includes("{project}")
