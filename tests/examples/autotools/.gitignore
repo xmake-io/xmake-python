@@ -1,0 +1,7 @@
+*~
+aclocal.m4
+*.in
+configure
+build-aux/
+autom4te.cache/
+.deps/

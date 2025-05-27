@@ -103,6 +103,7 @@ class WheelBuilder:
         xmaker = ini_info.dtool.get("xmaker", {})
         xmake_path = directory / "xmake.lua"
         maker = ini_info.dtool.get("maker", {})
+        configure_ac_path = directory / "configure.ac"
         configure_path = directory / "configure"
         make_path = directory / maker.get("makefile", "Makefile")
         if xmake_path.exists() or xmaker != {}:
@@ -111,7 +112,7 @@ class WheelBuilder:
                            xmaker.get("tempname", ""),
                            xmaker.get("project", os.path.abspath(".")),
                            ini_info.metadata["version"])
-        elif configure_path.exists() or make_path.exists() or maker != {}:
+        elif configure_ac_path.exists() or configure_path.exists() or make_path.exists() or maker != {}:
             xmake = Maker(maker.get("make", "make"),
                            maker.get("command", ""),
                            maker.get("tempname", ""),

@@ -6,6 +6,7 @@ from pathlib import Path
 from shlex import split, join
 
 from .builder.wheel_tag import WheelTag
+from ._logging import rich_print
 
 
 @dataclass
@@ -30,8 +31,9 @@ class XMaker:
             f.write(text)
 
     def run(self, commands):
-        print(join(commands))
-        run(commands, cwd=self.tempname)
+        cwd = self.tempname
+        rich_print(f"{{bold}}{cwd}\n$ " + join(commands), color="green")
+        run(commands, cwd=cwd)
 
     def package(self, wheeltag: WheelTag):
         commands = []
