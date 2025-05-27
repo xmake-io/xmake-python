@@ -29,11 +29,9 @@ Generator: xmake {version}
 Root-Is-Purelib: true
 """.format(version=__version__)
 
-def _write_wheel_file(f, supports_py2=False):
+def _write_wheel_file(f, tag):
     f.write(wheel_file_template)
-    if supports_py2:
-        f.write("Tag: py2-none-any\n")
-    f.write("Tag: py3-none-any\n")
+    f.write(f"Tag: {tag}\n")
 
 
 def _set_zinfo_mode(zinfo, mode):
@@ -249,7 +247,7 @@ class WheelBuilder:
             self._add_file(full_path, '%s/%s' % (self.dist_info, rel_path))
 
         with self._write_to_zip(self.dist_info + '/WHEEL') as f:
-            _write_wheel_file(f, supports_py2=self.metadata.supports_py2)
+            _write_wheel_file(f, self.wheeltag)
 
         with self._write_to_zip(self.dist_info + '/METADATA') as f:
             self.metadata.write_metadata_file(f)
