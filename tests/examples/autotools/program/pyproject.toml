@@ -5,5 +5,5 @@ build-backend = "xmake_python"
 [project]
 name = 'example'
 version = '0.0.1'
-description = 'example for pybind11'
+description = 'example for program'
 readme = 'README.md'
