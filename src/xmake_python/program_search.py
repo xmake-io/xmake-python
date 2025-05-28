@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import os
 import shutil
 import subprocess
@@ -98,6 +97,108 @@ def get_xmake_programs(*, module: bool = True) -> Generator[Program, None, None]
     """
     for xmake_path in _get_xmake_path(module=module):
         yield get_xmake_program(xmake_path)
+
+
+def _get_make_path(*, module: bool = True) -> Generator[Path, None, None]:
+    """
+    Get the path to make.
+    """
+    candidates = ("make",)
+    for candidate in candidates:
+        make_path = shutil.which(candidate)
+        if make_path is not None:
+            yield Path(make_path)
+
+
+def get_make_program(make_path: Path) -> Program:
+    """
+    Get the Program (with version) for make given a path. The version will be
+    None if it cannot be determined.
+    """
+    try:
+        result = Run(timeout=TIMEOUT).capture(make_path, "--version")
+        try:
+            version = Version(result.stdout.split()[2])
+            logger.info("make version via --version: {}", version)
+            return Program(make_path, version)
+        except (IndexError, InvalidVersion):
+            logger.warning(
+                "Could not determine make version via --version, got {!r}",
+                result.stdout,
+            )
+    except subprocess.CalledProcessError as err:
+        logger.warning(
+            "Could not determine make version via --version, got {!r} {!r}",
+            err.stdout,
+            err.stderr,
+        )
+    except PermissionError:
+        logger.warning("Permissions Error getting make's version")
+    except subprocess.TimeoutExpired:
+        logger.warning("Accessing make timed out, ignoring")
+
+    return Program(make_path, None)
+
+
+def get_make_programs(*, module: bool = True) -> Generator[Program, None, None]:
+    """
+    Get the path and version for make. If the version cannot be determined,
+    yiels (path, None). Otherwise, yields (path, version). Best matches are
+    yielded first.
+    """
+    for make_path in _get_make_path(module=module):
+        yield get_make_program(make_path)
+
+
+def _get_autoreconf_path(*, module: bool = True) -> Generator[Path, None, None]:
+    """
+    Get the path to autoreconf.
+    """
+    candidates = ("autoreconf",)
+    for candidate in candidates:
+        autoreconf_path = shutil.which(candidate)
+        if autoreconf_path is not None:
+            yield Path(autoreconf_path)
+
+
+def get_autoreconf_program(autoreconf_path: Path) -> Program:
+    """
+    Get the Program (with version) for autoreconf given a path. The version will be
+    None if it cannot be determined.
+    """
+    try:
+        result = Run(timeout=TIMEOUT).capture(autoreconf_path, "--version")
+        try:
+            version = Version(result.stdout.split()[3])
+            logger.info("autoreconf version via --version: {}", version)
+            return Program(autoreconf_path, version)
+        except (IndexError, InvalidVersion):
+            logger.warning(
+                "Could not determine autoreconf version via --version, got {!r}",
+                result.stdout,
+            )
+    except subprocess.CalledProcessError as err:
+        logger.warning(
+            "Could not determine autoreconf version via --version, got {!r} {!r}",
+            err.stdout,
+            err.stderr,
+        )
+    except PermissionError:
+        logger.warning("Permissions Error getting autoreconf's version")
+    except subprocess.TimeoutExpired:
+        logger.warning("Accessing autoreconf timed out, ignoring")
+
+    return Program(autoreconf_path, None)
+
+
+def get_autoreconf_programs(*, module: bool = True) -> Generator[Program, None, None]:
+    """
+    Get the path and version for autoreconf. If the version cannot be determined,
+    yiels (path, None). Otherwise, yields (path, version). Best matches are
+    yielded first.
+    """
+    for autoreconf_path in _get_autoreconf_path(module=module):
+        yield get_autoreconf_program(autoreconf_path)
 
 
 def best_program(

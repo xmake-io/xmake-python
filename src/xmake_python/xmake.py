@@ -82,12 +82,12 @@ class XMaker:
         self.run(cmd)
 
     def check_output(self, cmd: list[str]):
-        b = b""
+        b = ""
         try:
-            b = check_output(cmd, cwd=self.tempname)
+            b = check_output(cmd, cwd=self.tempname, text=True)
         except CalledProcessError as e:
-            b: bytes = e.stdout
-        return b.decode()
+            b: str = e.stdout
+        return b
 
     def show(self):
         cmd = [

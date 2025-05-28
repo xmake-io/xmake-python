@@ -2,7 +2,7 @@ import os
 
 from pathlib import Path
 from dataclasses import dataclass
-from subprocess import run, check_output, CalledProcessError
+from subprocess import run
 from shlex import split, join
 
 from .builder.wheel_tag import WheelTag
@@ -32,7 +32,7 @@ class Maker:
         # src/make_python/templates/Makefile
         with open(Path(__file__).parent / "templates" / "Makefile") as f:
             text = f.read()
-        if os.path.isfile(os.path.join(self.project, "configure.ac")):
+        if os.path.isfile(os.path.join(self.project, "configure.ac")) and not os.path.isfile(os.path.join(self.project, "configure")):
             cmd = ["autoreconf", "-vif"]
             self.run(cmd, cwd=self.project)
         if os.path.isfile(os.path.join(self.project, "configure")):
@@ -71,14 +71,6 @@ class Maker:
             "install",
         ]
         self.run(cmd)
-
-    def check_output(self, cmd: list[str]):
-        b = b""
-        try:
-            b = check_output(cmd, cwd=self.tempname)
-        except CalledProcessError as e:
-            b: bytes = e.stdout
-        return b.decode()
 
     def show(self):
         makefile = "Makefile.am"

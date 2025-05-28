@@ -30,6 +30,16 @@ Generator: xmake {version}
 Root-Is-Purelib: %s
 """.format(version=__version__)
 
+
+def get_build_system(xmake, makefile, configure, configure_ac):
+    if xmake.exists():
+        return "xmake"
+    if makefile.exists() or configure.exists():
+        return "make"
+    if configure_ac.exists():
+        return "autotools"
+    return ""
+
 def _write_wheel_file(f, tag="py3-none-any", root_is_purelib=True):
     f.write(wheel_file_template % ('true' if root_is_purelib else 'false'))
     f.write(f"Tag: {tag}\n")
@@ -94,25 +104,28 @@ class WheelBuilder:
     @classmethod
     def from_ini_path(cls, ini_path, target_fp):
         from .config import read_xmake_config
+
+        xmake = None
         directory = ini_path.parent
         ini_info = read_xmake_config(ini_path)
         entrypoints = ini_info.entrypoints
         module = common.Module(ini_info.module, directory)
         metadata = common.make_metadata(module, ini_info)
-        xmake = None
         xmaker = ini_info.dtool.get("xmaker", {})
-        xmake_path = directory / "xmake.lua"
         maker = ini_info.dtool.get("maker", {})
+
+        xmake_path = directory / "xmake.lua"
         configure_ac_path = directory / "configure.ac"
         configure_path = directory / "configure"
         make_path = directory / maker.get("makefile", "Makefile")
-        if xmake_path.exists() or xmaker != {}:
+        build_system = get_build_system(xmake_path, make_path, configure_path, configure_ac_path)
+        if build_system == "xmake":
             xmake = XMaker(xmaker.get("xmake", "xmake"),
                            xmaker.get("command", ""),
                            xmaker.get("tempname", ""),
                            xmaker.get("project", os.path.abspath(".")),
                            ini_info.metadata["version"])
-        elif configure_ac_path.exists() or configure_path.exists() or make_path.exists() or maker != {}:
+        elif build_system in ["make", "autotools"]:
             xmake = Maker(maker.get("make", "make"),
                            maker.get("command", ""),
                            maker.get("tempname", ""),

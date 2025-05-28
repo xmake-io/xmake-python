@@ -88,7 +88,7 @@ def get_requires_for_build_wheel(
     requires = GetRequires.from_config_settings(config_settings)
 
     # These are only injected if xmake is required for the wheel step
-    xmake_requires = [*requires.xmake()]
+    xmake_requires = [*requires.get_requires()]
 
     return [
         *xmake_requires,
