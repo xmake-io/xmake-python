@@ -84,6 +84,8 @@ class Maker:
         makefile = "Makefile.am"
         if os.path.exists(self.makefile):
             makefile = self.makefile
+        if not os.path.exists(self.makefile):
+            return 1
         with open(makefile) as f:
             text = f.read()
         if text.find(".c") == -1:
