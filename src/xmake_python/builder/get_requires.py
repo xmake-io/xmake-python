@@ -109,9 +109,9 @@ class GetRequires:
             )
             if autotools is None:
                 if autotools_verset is None:
-                    yield "autotools"
+                    yield "gnuautoconf"
                 else:
-                    yield f"autotools{autotools_verset}"
+                    yield f"gnuautoconf{autotools_verset}"
                 return
             logger.debug(
                 "Found system autotools: {} - not requiring PyPI package", autotools
