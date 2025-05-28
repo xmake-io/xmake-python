@@ -120,10 +120,7 @@ class WheelBuilder:
         make_path = directory / maker.get("makefile", "Makefile")
         build_system = get_build_system(xmake_path, make_path, configure_path, configure_ac_path)
         if build_system == "xmake":
-            ext = ""
-            if os.name == "nt":
-                ext = ".cmd"
-            xmake = XMaker(xmaker.get("xmake", "xmake" + ext),
+            xmake = XMaker(xmaker.get("xmake", "xmake"),
                            xmaker.get("command", ""),
                            xmaker.get("tempname", ""),
                            xmaker.get("project", os.path.abspath(".")),
