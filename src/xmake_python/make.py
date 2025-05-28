@@ -32,8 +32,10 @@ class Maker:
         # src/make_python/templates/Makefile
         with open(Path(__file__).parent / "templates" / "Makefile") as f:
             text = f.read()
-        if os.path.isfile(os.path.join(self.project, "configure.ac")) and not os.path.isfile(os.path.join(self.project, "configure")):
-            cmd = ["autoreconf", "-vif"]
+        if os.path.isfile(
+            os.path.join(self.project, "configure.ac")
+        ) and not os.path.isfile(os.path.join(self.project, "configure")):
+            cmd = ["perl", "autoreconf", "-vif"]
             self.run(cmd, cwd=self.project)
         if os.path.isfile(os.path.join(self.project, "configure")):
             self.cwd = os.path.join(self.tempname, "build")
@@ -54,6 +56,7 @@ class Maker:
 
     def config(self, wheeltag: WheelTag):
         cmd = [
+            "sh",
             os.path.join(self.project, "configure"),
             "--prefix=" + os.path.join(self.tempname, "data"),
         ] + split(self.command)
