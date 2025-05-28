@@ -13,7 +13,7 @@ do
     add_installfiles("pyproject.toml", { prefixdir = "$(metadatadir)" })
     add_installfiles("xmake.lua", { prefixdir = "$(nulldir)" })
 
-    set_configvar("version", "$(xmake-version)")
+    set_configvar("version", "$(project_version)")
     add_configfiles("main.h.in")
     add_includedirs("$(buildir)")
     add_installfiles("$(buildir)/main.h", { prefixdir = "$(includedir)" })

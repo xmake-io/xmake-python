@@ -1,4 +1,4 @@
-option("version")
+option("project_version")
 do
     set_default("{version}")
 end

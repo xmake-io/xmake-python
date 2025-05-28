@@ -2,7 +2,7 @@
 build: main
 main: main.c main.h
 main.h:
-	echo '#define VERSION "$(XMAKE_VERSION)"' > $@
+	echo '#define VERSION "$(project_version)"' > $@
 
 install:
 	install -D main -t $(bindir)

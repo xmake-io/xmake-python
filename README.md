@@ -225,10 +225,10 @@ This project also detect them.
 All variables suffixed `dir` are kept, like autotools. Except above mentioned
 `bindir`, `includedir`, `pythondir`, etc, the following variables are kept.
 
-- version: xmake version
-- prefixdir: string `data`, used to combine `prefix`: `/tmp/tmpXXXXXXXXX/data`
-- root: temporary working directory like `/tmp/tmpXXXXXXXXX`
-- datadir: `$(prefix)/share`, because it is usual.
+- `project_version`: project version
+- `prefixdir`: string `data`, used to combine `prefix`: `/tmp/tmpXXXXXXXXX/data`
+- `root`: temporary working directory like `/tmp/tmpXXXXXXXXX`
+- `datadir`: `$(prefix)/share`, because it is usual.
 
 ### Autotools/Makefile
 

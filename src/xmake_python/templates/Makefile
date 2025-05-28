@@ -1,4 +1,4 @@
-version := {version}
+project_version := {version}
 prefixdir := data
 root := {root}
 
