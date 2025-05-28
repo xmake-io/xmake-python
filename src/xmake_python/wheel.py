@@ -295,25 +295,28 @@ class WheelBuilder:
             f.write(self.dist_info + '/RECORD,,\n')
 
     def build(self, editable=False):
-        with self.temp:
-            if self.xmake:
-                self.xmake.init()
-                self.kind = self.xmake.show()
-                self.xmake.package(self.wheeltag)
-                self.xmake.install()
-            try:
-                if editable:
-                    self.add_pth()
-                else:
-                    self.copy_module()
-                self.add_data_directory()
-                self.add_scripts_directory()
-                self.add_headers_directory()
-                self.write_metadata()
-                self.write_record()
-            finally:
-                if self.wheel_zip:
-                    self.wheel_zip.close()
+        try:
+            with self.temp:
+                if self.xmake:
+                    self.xmake.init()
+                    self.kind = self.xmake.show()
+                    self.xmake.package(self.wheeltag)
+                    self.xmake.install()
+                try:
+                    if editable:
+                        self.add_pth()
+                    else:
+                        self.copy_module()
+                    self.add_data_directory()
+                    self.add_scripts_directory()
+                    self.add_headers_directory()
+                    self.write_metadata()
+                    self.write_record()
+                finally:
+                    if self.wheel_zip:
+                        self.wheel_zip.close()
+        except PermissionError as e:
+            print(e)
 
 def make_wheel_in(ini_path, wheel_directory, editable=False):
     # We don't know the final filename until metadata is loaded, so write to
