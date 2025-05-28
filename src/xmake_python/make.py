@@ -24,7 +24,10 @@ class Maker:
     def run(self, commands, cwd=None):
         if cwd is None:
             cwd = self.cwd
-        rich_print(f"{{bold}}$ cd {cwd}\n$ " + join(commands), color="green")
+        eol = "\n"
+        if os.name == "nt":
+            eol = "\r" + eol
+        rich_print(f"{{bold}}$ cd {cwd}{eol}$ " + join(commands), color="green")
         run(commands, cwd=cwd)
 
     def init(self):

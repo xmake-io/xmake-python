@@ -1,4 +1,5 @@
 import json
+import os
 
 from dataclasses import dataclass
 from subprocess import run, check_output, CalledProcessError
@@ -32,7 +33,10 @@ class XMaker:
 
     def run(self, commands):
         cwd = self.tempname
-        rich_print(f"{{bold}}{cwd}\n$ " + join(commands), color="green")
+        eol = "\n"
+        if os.name == "nt":
+            eol = "\r" + eol
+        rich_print(f"{{bold}}$ cd {cwd}{eol}$ " + join(commands), color="green")
         run(commands, cwd=cwd)
 
     def package(self, wheeltag: WheelTag):
