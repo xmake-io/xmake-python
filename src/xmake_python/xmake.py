@@ -2,7 +2,7 @@ import json
 import os
 
 from dataclasses import dataclass
-from subprocess import run, check_output, CalledProcessError
+from subprocess import run
 from pathlib import Path
 from shlex import split, join
 
@@ -36,8 +36,10 @@ class XMaker:
         eol = "\n"
         if os.name == "nt":
             eol = "\r" + eol
-        rich_print(f"{{bold}}$ cd {cwd}{eol}$ " + join(commands), color="green")
-        run(commands, cwd=cwd)
+        rich_print(
+            f"{{bold}}$ cd {cwd}{eol}$ " + join(commands), color="green"
+        )
+        run(commands, cwd=cwd, check=True)
 
     def package(self, wheeltag: WheelTag):
         commands = []
@@ -86,12 +88,12 @@ class XMaker:
         self.run(cmd)
 
     def check_output(self, cmd: list[str]):
-        b = ""
-        try:
-            b = check_output(cmd, cwd=self.tempname, text=True)
-        except CalledProcessError as e:
-            b: str = e.stdout
-        return b
+        stdout = run(
+            cmd, cwd=self.tempname, text=True, capture_output=True
+        ).stdout
+        if stdout:
+            return stdout
+        return ""
 
     def show(self):
         cmd = [

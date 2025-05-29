@@ -28,7 +28,7 @@ class Maker:
         if os.name == "nt":
             eol = "\r" + eol
         rich_print(f"{{bold}}$ cd {cwd}{eol}$ " + join(commands), color="green")
-        run(commands, cwd=cwd)
+        run(commands, cwd=cwd, check=True)
 
     def init(self):
         text = ""
