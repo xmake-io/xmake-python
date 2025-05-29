@@ -1,13 +1,13 @@
 project_version := {version}
 prefixdir := data
-root := {root}
+project_root := {root}
 
-prefix := $(root)/$(prefixdir)
+prefix := $(project_root)/$(prefixdir)
 bindir := $(prefix)/bin
 includedir := $(prefix)/include
-pythondir := $(root)/platlib
-metadatadir := $(root)/metadata
-nulldir := $(root)/null
+pythondir := $(project_root)/platlib
+metadatadir := $(project_root)/metadata
+nulldir := $(project_root)/null
 
 datadir := $(prefix)/share
 

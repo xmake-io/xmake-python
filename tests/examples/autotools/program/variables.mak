@@ -1,5 +1,5 @@
-root = $(prefix)/..
+project_root = $(prefix)/..
 
-pythondir = $(root)/platlib
-metadatadir = $(root)/metadata
-nulldir = $(root)/null
+pythondir = $(project_root)/platlib
+metadatadir = $(project_root)/metadata
+nulldir = $(project_root)/null

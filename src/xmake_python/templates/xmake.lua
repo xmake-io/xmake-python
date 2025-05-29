@@ -6,7 +6,7 @@ option("prefixdir")
 do
     set_default("data")
 end
-option("root")
+option("project_root")
 do
     set_default("{root}")
 end

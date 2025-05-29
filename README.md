@@ -227,7 +227,7 @@ All variables suffixed `dir` are kept, like autotools. Except above mentioned
 
 - `project_version`: project version
 - `prefixdir`: string `data`, used to combine `prefix`: `/tmp/tmpXXXXXXXXX/data`
-- `root`: temporary working directory like `/tmp/tmpXXXXXXXXX`
+- `project_root`: temporary working directory like `/tmp/tmpXXXXXXXXX`
 - `datadir`: `$(prefix)/share`, because it is usual.
 
 ### Autotools/Makefile
