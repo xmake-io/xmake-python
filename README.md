@@ -59,7 +59,11 @@ requires = ["xmake-python"]
 build-backend = "xmake_python"
 ```
 
-[examples](tests/examples)
+## Examples
+
+- [examples](tests/examples)
+- [xmake-wheel](https://github.com/xmake-io/xmake-wheel/)
+- [gnumake-wheel](https://github.com/xmake-io/gnumake-wheel/)
 
 ## Introduction
 

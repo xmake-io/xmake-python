@@ -4,7 +4,7 @@ add_requires("python 3.x")
 target("our_first_module")
 do
     set_prefixdir("$(prefixdir)/$(pythondir)", { libdir = "our_first_project" })
-    add_rules("python.library", { soabi = true })
+    add_rules("python.module")
     add_files("*.c")
     add_packages("python")
 

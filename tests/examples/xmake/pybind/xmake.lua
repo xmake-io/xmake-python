@@ -4,7 +4,7 @@ add_requires("pybind11")
 target("example")
 do
     set_prefixdir("$(prefixdir)/$(pythondir)", { libdir = "" })
-    add_rules("python.library", { soabi = true })
+    add_rules("python.module")
     add_files("*.cpp")
     add_packages("pybind11")
     set_languages("c++11")

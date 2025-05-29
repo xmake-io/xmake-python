@@ -1,12 +1,10 @@
 add_rules("mode.debug", "mode.release")
 add_requires("python 3.x")
 
-includes("src")
-
 target("c")
 do
     set_prefixdir("$(prefixdir)/$(pythondir)", {libdir = "example"})
-    add_rules("python.library", "python.cython", { soabi = true })
+    add_rules("python.cython")
     add_files("*.py")
     add_packages("python")
 
