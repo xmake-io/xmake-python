@@ -287,6 +287,8 @@ class WheelBuilder:
         # Write a record of the files in the wheel
         with self._write_to_zip(self.dist_info + '/RECORD') as f:
             for path, hash, size in self.records:
+                if path.find(',') >= 0:
+                    path = f'"{path}"'
                 f.write('{},sha256={},{}\n'.format(path, hash, size))
             # RECORD itself is recorded with no hash or size
             f.write(self.dist_info + '/RECORD,,\n')
