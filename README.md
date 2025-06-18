@@ -130,13 +130,10 @@ We provide two python packages. One is a
 ninja. Another is a python build system backend, which will install xmake wheel
 when xmake is not found in `$PATH`.
 
-Note xmake works needs `git`. Superisely, even if you
-`echo 'echo 1' > /usr/bin/git && chmod +x /usr/bin/git`, xmake still can work
-until it actually call git. And if you `add_package()` in your `xmake.lua`,
-which download tools (curl, wget, ...) and extractors (tar, 7z or gzip, ...) are
-all needed. Enough lucky, xmake will build git, 7zip, ... if needed. However, in
-qemu and docker, the build will be very slow, So git had better be packaged to
-PYPI, or expect users to install these tools by themselves.
+Except xmake, if you use [xmake-repo](https://github.com/xmake-io/xmake-repo)'s
+packages, `git` is needed. If package have `set_sources()`, download tools like
+curl and extract tools like `7z` are also needed. `xmake` will build them from
+`xmake-repo` if they doesn't exist, which is slow for cross compilation.
 
 ### Wheel
 
