@@ -1,13 +1,12 @@
 import json
 import os
-
 from dataclasses import dataclass
-from subprocess import run
 from pathlib import Path
-from shlex import split, join
+from shlex import join, split
+from subprocess import run
 
-from .builder.wheel_tag import WheelTag
 from ._logging import rich_print
+from .builder.wheel_tag import WheelTag
 
 
 @dataclass
@@ -106,7 +105,11 @@ class XMaker:
             "--json",
         ]
         output = self.check_output(cmd)
-        targets = json.loads(output)
+        targets = []
+        try:
+            targets = json.loads(output)
+        except json.decoder.JSONDecodeError:
+            print(f"{output}")
         kinds = []
         for target in targets:
             kind = 0
