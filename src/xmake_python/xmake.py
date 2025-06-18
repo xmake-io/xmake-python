@@ -30,7 +30,7 @@ class XMaker:
         with open(Path(self.tempname) / "xmake.lua", "w") as f:
             f.write(text)
 
-    def run(self, commands):
+    def run(self, commands, check: bool = True):
         cwd = self.tempname
         eol = "\n"
         if os.name == "nt":
@@ -38,7 +38,16 @@ class XMaker:
         rich_print(
             f"{{bold}}$ cd {cwd}{eol}$ " + join(commands), color="green"
         )
-        run(commands, cwd=cwd, check=True)
+        process = run(
+            commands,
+            cwd=cwd,
+            check=check,
+            text=True,
+            capture_output=(not check),
+        )
+        if not check:
+            print(process.stdout, end="")
+        return process.stdout
 
     def package(self, wheeltag: WheelTag):
         commands = []
@@ -86,14 +95,6 @@ class XMaker:
         ]
         self.run(cmd)
 
-    def check_output(self, cmd: list[str]):
-        stdout = run(
-            cmd, cwd=self.tempname, text=True, capture_output=True
-        ).stdout
-        if stdout:
-            return stdout
-        return ""
-
     def show(self):
         cmd = [
             self.xmake,
@@ -104,7 +105,7 @@ class XMaker:
             "-ltargets",
             "--json",
         ]
-        output = self.check_output(cmd)
+        output = self.run(cmd, False)
         targets = []
         try:
             targets = json.loads(output)
@@ -114,7 +115,7 @@ class XMaker:
         for target in targets:
             kind = 0
             cmd = [self.xmake, "show", "-y", "-P", self.tempname, "-t", target]
-            text = self.check_output(cmd)
+            text = self.run(cmd, False)
             if text.find("phony") == -1 or text.find("packages") != -1:
                 kind = 1
                 if text.find("python.") != -1:
