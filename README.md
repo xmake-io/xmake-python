@@ -255,3 +255,7 @@ The following build systems respect it:
 For autotools, you must include
 [`variables.mak`](tests/examples/autotools/program/variables.mak) in your
 `Makefile.am`.
+
+## TODO
+
+- [ ] get version from scm: `dynamic = ["version"]` in `pyproject.toml`
