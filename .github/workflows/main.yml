@@ -36,6 +36,8 @@ jobs:
         with:
           python-version: ${{env.python-version}}
           cache: ${{env.cache}}
+      - uses: xmake-io/github-action-setup-xmake@v1
+        if: runner.os == 'Windows'
       - name: Install dependencies
         run: |
           pip install -e '.[dev]'
