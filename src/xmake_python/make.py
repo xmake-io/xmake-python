@@ -1,12 +1,11 @@
 import os
-
-from pathlib import Path
 from dataclasses import dataclass
+from pathlib import Path
+from shlex import join, split
 from subprocess import run
-from shlex import split, join
 
-from .builder.wheel_tag import WheelTag
 from ._logging import rich_print
+from .builder.wheel_tag import WheelTag
 
 
 @dataclass
@@ -20,6 +19,9 @@ class Maker:
 
     def __post_init__(self):
         self.cwd = self.project
+        self.configure = os.path.join(self.project, "configure.gnu")
+        if not os.path.isfile(self.configure):
+            self.configure = os.path.join(self.project, "configure")
 
     def run(self, commands, cwd=None):
         if cwd is None:
@@ -27,7 +29,9 @@ class Maker:
         eol = "\n"
         if os.name == "nt":
             eol = "\r" + eol
-        rich_print(f"{{bold}}$ cd {cwd}{eol}$ " + join(commands), color="green")
+        rich_print(
+            f"{{bold}}$ cd {cwd}{eol}$ " + join(commands), color="green"
+        )
         run(commands, cwd=cwd, check=True)
 
     def init(self):
@@ -40,7 +44,7 @@ class Maker:
         ) and not os.path.isfile(os.path.join(self.project, "configure")):
             cmd = ["perl", "autoreconf", "-vif"]
             self.run(cmd, cwd=self.project)
-        if os.path.isfile(os.path.join(self.project, "configure")):
+        if os.path.isfile(self.configure):
             self.cwd = os.path.join(self.tempname, "build")
             os.mkdir(self.cwd)
         text = text.format(
@@ -53,14 +57,14 @@ class Maker:
             f.write(text)
 
     def package(self, wheeltag: WheelTag):
-        if os.path.isfile(os.path.join(self.project, "configure")):
+        if os.path.isfile(self.configure):
             self.config(wheeltag)
         self.build()
 
     def config(self, wheeltag: WheelTag):
         cmd = [
             "sh",
-            os.path.join(self.project, "configure"),
+            self.configure,
             "--prefix=" + os.path.join(self.tempname, "data"),
         ] + split(self.command)
         self.run(cmd, cwd=os.path.join(self.tempname, "build"))
