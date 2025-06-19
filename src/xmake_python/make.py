@@ -90,7 +90,7 @@ class Maker:
             return 1
         with open(makefile) as f:
             text = f.read()
-        if text.find(".c") == -1:
+        if text.find(".c") == -1 and text.find(".h") == -1:
             return 0
         if text.find("pkg-config --cflags python") == -1:
             return 1
