@@ -13,6 +13,7 @@ import tempfile
 from pathlib import Path
 from types import SimpleNamespace
 import zipfile
+from shutil import which
 from pathlib import Path
 
 from . import common
@@ -120,13 +121,13 @@ class WheelBuilder:
         make_path = directory / maker.get("makefile", "Makefile")
         build_system = get_build_system(xmake_path, make_path, configure_path, configure_ac_path)
         if build_system == "xmake":
-            xmake = XMaker(xmaker.get("xmake", "xmake"),
+            xmake = XMaker(xmaker.get("xmake", which("xmake")),
                            xmaker.get("command", ""),
                            xmaker.get("tempname", ""),
                            xmaker.get("project", os.path.abspath(".")),
                            ini_info.metadata["version"])
         elif build_system in ["make", "autotools"]:
-            xmake = Maker(maker.get("make", "make"),
+            xmake = Maker(maker.get("make", which("make")),
                            maker.get("command", ""),
                            maker.get("tempname", ""),
                            maker.get("project", os.path.abspath(".")),

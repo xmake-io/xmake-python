@@ -44,7 +44,6 @@ class XMaker:
             check=check,
             text=True,
             capture_output=(not check),
-            shell=(os.name == "nt"),
         )
         if not check:
             print(process.stdout, end="")
