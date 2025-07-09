@@ -4,7 +4,6 @@ else
   DLL_EXT := so
 endif
 
-OSTYPE := $(shell sh -c 'echo $$OSTYPE')
 UNAME_M := $(shell uname -m)
 ifeq ($(UNAME_M),x86_64)
   ifeq ($(OS),Windows_NT)
@@ -43,7 +42,7 @@ else
   ifeq ($(OS),Windows_NT)
     ARCH := win$(CPU)
   else
-    ARCH := $(CPU)-$(OSTYPE)
+    ARCH := $(CPU)-$(shell sh -c 'echo $$OSTYPE')
   endif
 endif
 
